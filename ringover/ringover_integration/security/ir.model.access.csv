@@ -1,3 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_mail_activity_ringover,mail.activity ringover,model_mail_activity,base.group_user,1,1,1,1
-access_res_partner_ringover,res.partner ringover,model_res_partner,base.group_user,1,0,0,0

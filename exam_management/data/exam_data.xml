@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Sample Exam Data -->
+        <record id="exam_math_101" model="exam.planning">
+            <field name="exam_name">Mathematics Mid-Term</field>
+            <field name="exam_code">MATH101-MT</field>
+            <field name="subject">Mathematics</field>
+            <field name="exam_semester">fy_sem3</field>
+            <field name="exam_date" eval="(DateTime.now() + timedelta(days=30)).strftime('%Y-%m-%d')"/>
+            <field name="exam_time">9.0</field>
+            <field name="duration">3.0</field>
+            <field name="total_marks">100</field>
+            <field name="room_number">Room A-101</field>
+            <field name="registration_deadline" eval="(DateTime.now() + timedelta(days=20)).strftime('%Y-%m-%d')"/>
+            <field name="instructions">Bring calculator, ID card, and writing materials. No mobile phones allowed.</field>
+        </record>
+
+    </data>
+</odoo>

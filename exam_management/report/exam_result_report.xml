@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+    <!-- Report Template -->
+    <template id="exam_result_report_template">
+      <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="o">
+          <t t-call="web.external_layout">
+            <div class="page">
+
+              <!-- Header -->
+              <h2 style="text-align:center; background:#3f51b5; color:#fff; padding:10px; border-radius:5px;">
+                Exam Result Report
+              </h2>
+
+              <!-- Student & Exam Info -->
+              <table style="width:100%; margin-top:20px; font-size:14px; line-height:1.8;" border="0">
+                <tr>
+                  <td><strong>Student:</strong></td>
+                  <td><span t-field="o.student_id.student_name"/></td>
+                </tr>
+                <tr>
+                  <td><strong>Exam:</strong></td>
+                  <td><span t-field="o.exam_id.exam_name"/></td>
+                </tr>
+                <tr>
+                  <td><strong>Total Marks:</strong></td>
+                  <td><span t-field="o.total_marks"/></td>
+                </tr>
+                <tr>
+                  <td><strong>Marks Obtained:</strong></td>
+                  <td><span t-field="o.marks_obtained"/></td>
+                </tr>
+                <tr>
+                  <td><strong>Percentage:</strong></td>
+                  <td><span t-field="o.percentage"/>%</td>
+                </tr>
+                <tr>
+                  <td><strong>Grade:</strong></td>
+                  <td><span t-field="o.grade"/></td>
+                </tr>
+                <tr>
+                  <td><strong>Result:</strong></td>
+                  <td>
+                    <span t-field="o.result_status"/>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Subject wise Marks -->
+              <div style="margin-top:20px;">
+                <h4>Subject-wise Marks</h4>
+                <table style="width:100%; border-collapse:collapse; font-size:13px;" border="1">
+                  <thead style="background:#f2f2f2;">
+                    <tr>
+                      <th style="padding:5px;">Subject</th>
+                      <th style="padding:5px;">Total Marks</th>
+                      <th style="padding:5px;">Marks Obtained</th>
+                      <th style="padding:5px;">Percentage</th>
+                      <th style="padding:5px;">Grade</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr t-foreach="o.subject_line_ids" t-as="line">
+                      <td style="padding:5px;"><span t-field="line.subject_id.name"/></td>
+                      <td style="padding:5px;"><span t-field="line.total_marks"/></td>
+                      <td style="padding:5px;"><span t-field="line.marks_obtained"/></td>
+                      <td style="padding:5px;"><span t-field="line.percentage"/>%</td>
+                      <td style="padding:5px;"><span t-field="line.grade"/></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+          </t>
+        </t>
+      </t>
+    </template>
+
+    <!-- Report Action -->
+    <record id="action_report_exam_result" model="ir.actions.report">
+      <field name="name">Exam Result Report</field>
+      <field name="model">exam.result</field>
+      <field name="report_type">qweb-pdf</field>
+      <field name="report_name">exam_management.exam_result_report_template</field>
+      <field name="report_file">exam_management.exam_result_report_template</field>
+      <field name="print_report_name">'Exam Result - %s' % (object.display_name)</field>
+      <field name="binding_model_id" ref="model_exam_result"/>
+      <field name="binding_type">report</field>
+      <field name="multi">True</field>
+    </record>
+
+  </data>
+</odoo>

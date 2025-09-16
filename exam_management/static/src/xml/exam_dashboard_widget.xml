@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ExamDashboardWidget" owl="1">
+        <div t-ref="root" class="exam-dashboard-widget">
+            <div t-raw="props.value"/>
+        </div>
+    </t>
+</templates>

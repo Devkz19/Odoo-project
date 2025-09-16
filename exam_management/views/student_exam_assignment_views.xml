@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- LIST VIEW -->
+    <record id="view_student_exam_assignment_list" model="ir.ui.view">
+        <field name="name">student.exam.assignment.list</field>
+        <field name="model">student.exam.assignment</field>
+        <field name="arch" type="xml"> 
+            <list string="Assigned Exams">
+                <field name="student_id" string="Student"/>
+                <field name="exam_id" string="Exam"/>
+                <field name="subject_id" string="Subject"/>
+                <field name="class_semester" string="Class/Semester"/>
+                <field name="course" string="Course"/>
+                <field name="assignment_date" string="Assigned On"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- FORM VIEW -->
+    <record id="view_student_exam_assignment_form" model="ir.ui.view">
+        <field name="name">student.exam.assignment.form</field>
+        <field name="model">student.exam.assignment</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="student_id"/>
+                        <field name="exam_id"/>
+                        <field name="subject_id"/>
+                        <field name="class_semester"/>
+                        <field name="course"/>
+                        <field name="assignment_date"/>
+                    </group>
+                </sheet>
+                  <chatter>
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </chatter>
+            </form>
+        </field>
+    </record>
+
+    <!-- GRAPH VIEW -->
+    <record id="view_exam_assignment_graph" model="ir.ui.view">
+        <field name="name">student.exam.assignment.graph</field>
+        <field name="model">student.exam.assignment</field>
+        <field name="arch" type="xml">
+            <graph string="Students Registered per Exam" type="bar">
+                <field name="exam_id" type="row"/>
+                <field name="id" type="measure" string="Total Students" operator="count"/>
+            </graph>
+        </field>
+    </record>
+
+        <!-- SEARCH VIEW -->
+    <record id="view_student_exam_assignment_search" model="ir.ui.view">
+        <field name="name">student.exam.assignment.search</field>
+        <field name="model">student.exam.assignment</field>
+        <field name="arch" type="xml">
+            <search string="Exam Assignment Search">
+                <!-- Main Search fields -->
+                <field name="student_id" string="Student"/>
+                <field name="exam_id" string="Exam"/>
+                <field name="subject_id" string="Subject"/>
+                <field name="class_semester" string="Semester"/>
+                <field name="course" string="Course"/>
+
+                <!-- Filters -->
+                <filter string="By Course" name="filter_course" domain="[]" context="{'group_by':'course'}"/>
+                <filter string="By Semester" name="filter_sem" domain="[]" context="{'group_by':'class_semester'}"/>
+                <filter string="By Subject" name="filter_subject" domain="[]" context="{'group_by':'subject_id'}"/>
+
+                <!-- Group By options -->
+                <group expand="0" string="Group By">
+                    <filter string="Course" name="group_course" context="{'group_by':'course'}"/>
+                    <filter string="Semester" name="group_semester" context="{'group_by':'class_semester'}"/>
+                    <filter string="Subject" name="group_subject" context="{'group_by':'subject_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- KANBAN VIEW -->
+    <record id="view_student_exam_assignment_kanban" model="ir.ui.view">
+        <field name="name">student.exam.assignment.kanban</field>
+        <field name="model">student.exam.assignment</field>
+        <field name="arch" type="xml">
+             <kanban class="o_kanban_exam_assignment" default_group_by="exam_id">
+                <field name="student_id"/>
+                <field name="exam_id"/>
+                <field name="subject_id"/>
+                <field name="class_semester"/>
+                <field name="course"/>
+                <field name="assignment_date"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_kanban_record">
+                            <strong><field name="student_id"/></strong>
+                            <div>Exam: <field name="exam_id"/></div>
+                            <div>Subject: <field name="subject_id"/></div>
+                            <div>Class: <field name="class_semester"/></div>
+                            <div>Course: <field name="course"/></div>
+                            <small>Assigned On: <field name="assignment_date"/></small>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ACTION -->
+    <record id="action_student_exam_assignment" model="ir.actions.act_window">
+        <field name="name">Exam Assignments</field>
+        <field name="res_model">student.exam.assignment</field>
+        <field name="view_mode">list,form,kanban,graph,search</field>
+        <field name="context">{}</field>
+        <field name="groups_id" eval="[(4, ref('exam_management.group_college_admin'))]"/>
+    </record>
+
+    <!-- MENU -->
+    <menuitem id="menu_exam_assignment"
+              name="Exam Assignments"
+              parent="menu_exam_management_root"  
+              action="action_student_exam_assignment" 
+              sequence="31"
+              groups="exam_management.group_college_admin"/>  
+
+</odoo>

@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- State View for total student -->
+    <!-- <record id="view_student_registration_form_inherit_stats" model="ir.ui.view">
+        <field name="name">student.registration.list.inherit.stats</field>
+        <field name="model">student.registration</field>
+        <field name="inherit_id" ref="exam_management.view_student_registration_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+
+                <button name="action_view_total_students"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-users"
+                        string="Total Students">
+                    <field name="student_count" widget="statinfo"/>
+                </button>
+
+                <button name="action_view_confirmed_students"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-check-circle"
+                        string="Confirmed Students">
+                    <field name="student_count_confirmed" widget="statinfo"/>
+                </button>
+
+                <button name="action_view_cancelled_students"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-times-circle"
+                        string="Cancelled Students">
+                    <field name="student_count_cancelled" widget="statinfo"/>
+                </button>
+
+            </xpath>
+        </field>
+    </record> -->
+
+    <!-- Search Panel for Student Registration --> 
+    <record id="view_student_registration_search_panel" model="ir.ui.view">
+        <field name="name">student.registration.search.panel</field>
+        <field name="model">student.registration</field>
+        <field name="inherit_id" ref="view_student_registration_search"/>
+        <field name="arch" type="xml">
+            <search position="inside">
+                <searchpanel>
+                    <field name="course" icon="fa-filter" string="Course" select="multi"/>
+                    <field name="class_semester" icon="fa-filter" string="Semester" select="multi"/>
+                    <field name="state" icon="fa-filter" string="Status" select="multi"/>
+                </searchpanel>
+            </search>
+        </field>
+    </record>
+
+
+    <!-- List View -->
+    <record id="view_student_registration_list" model="ir.ui.view">
+        <field name="name">student.registration.list</field>
+        <field name="model">student.registration</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="student_name" />
+                <field name="student_id" />
+                <field name="email" />
+                <field name="phone" />
+                <field name="class_semester" />
+                <field name="course" />
+                <field name="state" />
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_student_registration_form" model="ir.ui.view">
+        <field name="name">student.registration.form</field>
+        <field name="model">student.registration</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_send_test_email"
+                        type="object"
+                        string="Send Test Email"
+                        class="btn-primary" />
+                     
+                       <button name="action_confirm"
+                                    type="object"
+                                    string="Confirm"
+                                    class="btn-primary"
+                                    invisible="state == 'confirm'"/>
+                                    
+                       <button name="action_cancel"
+                                    type="object"
+                                    string="Cancel"
+                                    class="btn-secondary"
+                                    invisible="state == 'cancel'"/>
+
+                        <field name="state" widget="statusbar" options="{'clickable': True}" />
+
+                </header>
+                <sheet>
+                    <group>
+                        <field name="student_name" />
+                        <field name="student_id" readonly="1" />
+                        <field name="email" />
+                        <field name="phone" />
+                        <field name="user_id" />
+                    </group>
+                    <group>
+                        <field name="class_semester" />
+                        <field name="course" />
+                    </group>
+
+                </sheet>
+                <chatter>
+                    <field name="message_follower_ids" widget="mail_followers" />
+                    <field name="activity_ids" widget="mail_activity" />
+                    <field name="message_ids" widget="mail_thread" />
+                </chatter>
+            </form>
+        </field>
+    </record>
+
+    <!-- Kanban View -->
+    <record id="view_student_registration_kanban" model="ir.ui.view">
+        <field name="name">student.registration.kanban</field>
+        <field name="model">student.registration</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="course">
+                <field name="student_name" />
+                <field name="student_id" />
+                <field name="class_semester" />
+                <field name="course" />
+                <field name="state" />
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_kanban_record">
+                            <strong>
+                                <field name="student_name" />
+                            </strong>
+                            <div>Enrollment ID: <field name="student_id" /></div>
+                            <div>Class: <field name="class_semester" /></div>
+                            <div>Course: <field name="course" /></div>
+                            <div>Status: <field name="state" /></div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Search view for Student Registration by Course and Semester -->
+    <record id="view_student_registration_search" model="ir.ui.view">
+        <field name="name">student.registration.search</field>
+        <field name="model">student.registration</field>
+        <field name="arch" type="xml">
+            <search string="Search Students">
+
+                <!-- Quick search fields -->
+                <field name="student_name" string="Name"/>
+                <field name="course" string="Course"/>
+                <field name="class_semester" string="Semester"/>
+                <field name="email" string="Email"/>
+                <field name="phone" string="Phone"/>
+                <field name="state" string="Status"/>
+
+                <!-- Filters -->
+                <filter string="Confirmed" name="confirmed" domain="[('state','=','confirm')]"/>
+                <filter string="Cancelled" name="cancelled" domain="[('state','=','cancel')]"/>
+
+                <group expand="0" string="Group By">
+                    <filter string="Course" name="course" context="{'group_by':'course'}"/>
+                    <filter string="Semester" name="class_semester" context="{'group_by':'class_semester'}"/>
+                    <filter string="Status" name="state" context="{'group_by':'state'}"/>
+                </group>
+
+            </search>
+        </field>
+    </record>
+ 
+    <!-- Portal View for Students -->
+    <record id="view_student_registration_portal_form" model="ir.ui.view">
+        <field name="name">student.registration.portal.form</field>
+        <field name="model">student.registration</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group string="My Profile">
+                        <field name="student_name" readonly="1" />
+                        <field name="student_id" readonly="1" />
+                        <field name="email" readonly="1" />
+                        <field name="phone" readonly="1" />
+                        <field name="class_semester" readonly="1" />
+                        <field name="course" readonly="1" />
+                        <field name="state" readonly="1" />
+                    </group>
+                    <group string="Assigned Exams">
+                        <field name="assignment_ids" readonly="1">
+                            <list>
+                                <field name="exam_id" />
+                                <field name="class_semester" />
+                                <field name="status" />
+                            </list>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action for Admin -->
+    <record id="action_student_registration" model="ir.actions.act_window">
+        <field name="name">Student Registrations</field>
+        <field name="res_model">student.registration</field>
+        <field name="view_mode">list,form,kanban</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No student registrations yet!
+            </p>
+            <p>
+                Students can register for available exams through the portal.
+            </p>
+        </field>
+    </record>
+
+    <!-- Action for Confirmed Students -->
+    <record id="action_student_registration_confirmed" model="ir.actions.act_window">
+        <field name="name">Confirmed Registrations</field>
+        <field name="res_model">student.registration</field>
+        <field name="view_mode">list,form,kanban</field>
+        <field name="domain">[('state','=','confirm')]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No confirmed registrations yet!
+            </p>
+        </field>
+    </record>
+
+    <!-- Action for Cancelled Students -->
+    <record id="action_student_registration_cancelled" model="ir.actions.act_window">
+        <field name="name">Cancelled Registrations</field>
+        <field name="res_model">student.registration</field>
+        <field name="view_mode">list,form,kanban</field>
+        <field name="domain">[('state','=','cancel')]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No cancelled registrations yet!
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_student_registrations"
+              name="Student Registrations"
+              parent="menu_exam_management_root"
+              action="action_student_registration"
+              sequence="2"
+              groups="exam_management.group_college_admin"/>
+
+    <!-- Child Menu: Confirmed Registrations -->
+    <menuitem id="menu_student_confirmed_registrations"
+              name="Confirmed Registrations"
+              parent="menu_student_registrations"
+              action="action_student_registration_confirmed"
+              sequence="1"
+              groups="exam_management.group_college_admin"/>
+
+    <!-- Child Menu: Cancelled Registrations -->
+    <menuitem id="menu_student_cancelled_registrations"
+              name="Cancelled Registrations"
+              parent="menu_student_registrations"
+              action="action_student_registration_cancelled"
+              sequence="2"
+              groups="exam_management.group_college_admin"/>
+</odoo>

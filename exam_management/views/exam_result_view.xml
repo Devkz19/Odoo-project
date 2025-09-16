@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- List View -->
+    <record id="view_exam_result_list" model="ir.ui.view">
+        <field name="name">exam.result.list</field>
+        <field name="model">exam.result</field>
+        <field name="arch" type="xml">
+            <list string="Exam Results">
+                <field name="display_name"/>
+                <field name="exam_id"/>
+                <field name="student_id"/>
+                <field name="marks_obtained"/>
+                <field name="total_marks"/>
+                <field name="percentage" readonly="1"/>
+                <field name="grade" readonly="1"/>
+                <field name="category" readonly="1"/>
+                <field name="result_status" readonly="1"/>
+
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_exam_result_form" model="ir.ui.view">
+        <field name="name">exam.result.form</field>
+        <field name="model">exam.result</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="display_name" readonly="1"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="exam_id"/>
+                            <field name="student_id" domain="[('assignment_ids.exam_id', '=', exam_id)]"/>
+                        </group>
+                        <group>
+                            <field name="marks_obtained" readonly="1"/>
+                            <field name="total_marks" readonly="1"/>
+                            <field name="percentage" readonly="1"/>
+                            <field name="grade" readonly="1"/>
+                            <field name="category" readonly="1"/>
+                            <field name="result_status" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Subject Marks">
+                            <field name="subject_line_ids">
+                                <list editable="bottom">
+                                    <field name="subject_id"/>
+                                    <field name="attendance" readonly="1" force_save="1"/>
+                                    <field name="total_marks" readonly="1"/>
+                                   <field name="marks_obtained"
+                                    readonly="attendance == 'absent'"
+                                    force_save="1"/>
+                                    <field name="percentage" readonly="1"/>
+                                    <field name="grade" readonly="1"/> 
+                                </list>
+                            </field>
+                        </page>
+
+                    </notebook>
+                </sheet>
+                <chatter>
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </chatter>
+            </form>
+        </field>
+    </record>
+
+    <!-- Kanban view -->
+    <record id="view_exam_result_kanban" model="ir.ui.view">
+        <field name="name">exam.result.kanban</field>
+        <field name="model">exam.result</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="exam_id" class="o_kanban_exam_result">
+                <field name="student_id"/>
+                <field name="exam_id"/>
+                <field name="percentage"/>
+                <field name="grade"/>
+                <field name="category"/>
+                <field name="result_status"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_kanban_record">
+                            <strong><field name="student_id"/></strong><br/>
+                            <span>Exam: <field name="exam_id"/></span><br/>
+                            <span>Grade: <field name="grade"/></span><br/>
+                            <span>Result Category: <field name="category"/></span><br/>
+                            <span>%: <field name="percentage"/></span><br/>
+                            <span>Status: <field name="result_status"/></span>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Graph View -->
+    <record id="view_exam_result_graph" model="ir.ui.view">
+        <field name="name">exam.result.graph</field>
+        <field name="model">exam.result</field>
+        <field name="arch" type="xml">
+            <graph string="Exam Results Analysis" type="bar">
+                <field name="exam_id" type="row"/>
+                <field name="student_id" type="count"/>
+                <field name="result_status" type="col"/>
+            </graph>
+        </field>
+    </record>
+
+
+    <!-- Search View -->
+    <record id="view_exam_result_search" model="ir.ui.view">
+        <field name="name">exam.result.search</field>
+        <field name="model">exam.result</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="exam_id"/>
+                <field name="student_id"/>
+                <field name="grade"/>
+                <field name="result_status"/>
+                <filter string="Passed" name="filter_pass" domain="[('result_status','=','pass')]"/>
+                <filter string="Failed" name="filter_fail" domain="[('result_status','=','fail')]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_exam_result" model="ir.actions.act_window">
+        <field name="name">Exam Results</field>
+        <field name="res_model">exam.result</field>
+        <field name="view_mode">list,form,search,kanban,graph</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_exam_result_root"
+              name="Exam Results"
+              parent="menu_exam_management_root"
+              action="action_exam_result"
+              sequence="60"
+              groups="exam_management.group_college_admin"/>
+</odoo>

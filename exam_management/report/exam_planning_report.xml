@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    
+    <!-- Report Template -->
+    <template id="exam_planning_report_template">
+      <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="o">
+          <t t-call="web.external_layout">
+            <div class="page">
+              
+              <!-- Header -->
+              <h2 style="text-align:center; background:#3f51b5; color:#fff; padding:10px; border-radius:5px;">
+                Exam Planning Report
+              </h2>
+              
+              <!-- Exam Info -->
+              <table style="width:100%; margin-top:20px; font-size:14px; line-height:1.8;" border="0">
+                <tr>
+                  <td><strong>Exam Name:</strong></td>
+                  <td><span t-field="o.exam_name"/></td>
+                </tr>
+                <tr>
+                  <td><strong>Exam Code:</strong></td>
+                  <td><span t-field="o.exam_code"/></td>
+                </tr>
+                <tr>
+                  <td><strong>Course:</strong></td>
+                  <td><span t-field="o.course"/></td>
+                </tr>
+                <tr>
+                  <td><strong>Class and Semester:</strong></td>
+                  <td><span t-field="o.class_semester"/></td>
+                </tr>
+                <tr>
+                  <td><strong>Exam Start Date:</strong></td>
+                  <td><span t-field="o.exam_start_date"/></td>
+                </tr>
+                <tr>
+                  <td><strong>Exam End Date:</strong></td>
+                  <td><span t-field="o.exam_end_date"/></td>
+                </tr>
+                <tr>
+                  <td><strong>Exam Time:</strong></td>
+                  <td><span t-field="o.exam_time"/></td>
+                </tr>
+                <tr>
+                  <td><strong>Duration (Hours):</strong></td>
+                  <td><span t-field="o.duration"/></td>
+                </tr>
+                <tr>
+                  <td><strong>Total Marks:</strong></td>
+                  <td><span t-field="o.total_marks"/></td>
+                </tr>
+                <tr>
+                  <td><strong>Registration Deadline:</strong></td>
+                  <td><span t-field="o.registration_deadline"/></td>
+                </tr>
+              </table>
+
+              <!-- Subjects Table -->
+              <div style="margin-top:20px;">
+                <h4>Subjects</h4>
+                <table style="width:100%; border-collapse:collapse; font-size:13px;" border="1">
+                  <thead style="background:#f2f2f2;">
+                    <tr>
+                      <th style="padding:5px;">Subject Name</th>
+                      <th style="padding:5px;">Exam Date</th>
+                      <th style="padding:5px;">Total Marks</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr t-foreach="o.subject_ids" t-as="subj">
+                      <td style="padding:5px;"><span t-field="subj.name"/></td>
+                      <td style="padding:5px;"><span t-field="subj.exam_date"/></td>
+                      <td style="padding:5px;"><span t-field="subj.total_marks"/></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Instructions -->
+              <div style="margin-top:20px;">
+                <h4>Instructions</h4>
+                <p t-field="o.instructions"/>
+              </div>
+
+            </div>
+          </t>
+        </t>
+      </t>
+    </template>
+
+    <!-- Report Action -->
+    <record id="action_report_exam_planning" model="ir.actions.report">
+      <field name="name">Exam Planning Report</field>
+      <field name="model">exam.planning</field>
+      <field name="report_type">qweb-pdf</field>
+      <field name="report_name">exam_management.exam_planning_report_template</field>
+      <field name="report_file">exam_management.exam_planning_report_template</field>
+      <field name="print_report_name">'Exam Planning - %s' % (object.exam_name)</field>
+      <field name="binding_model_id" ref="model_exam_planning"/>
+      <field name="binding_type">report</field>
+      <field name="multi">True</field>
+    </record>
+
+  </data>
+</odoo>

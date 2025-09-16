@@ -1,0 +1,42 @@
+<odoo>
+    <!-- Student Registration Form  -->
+    <record id="view_student_form_inherit" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.student</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <!-- Add your student-specific fields -->
+            <xpath expr="//sheet/notebook" position="inside">
+                <page string="Student Info" invisible="not is_student">
+                <group>
+                    <field name="student_id"/>
+                    <field name="class_semester"/>
+                    <field name="course"/>
+                </group>
+            </page>
+            </xpath>
+        </field>
+    </record>
+
+
+    <!-- Student Action/Menu -->
+   <record id="action_student" model="ir.actions.act_window">
+    <field name="name">Student Registration</field>
+    <field name="res_model">res.partner</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('is_student','=',True)]</field>
+   <field name="views" eval="[
+       
+        (ref('view_student_form_inherit'), 'form')
+    ]"/>
+
+</record>
+
+<menuitem id="menu_student_registration"
+          name="Student Registration page"
+          parent="menu_exam_management_root"
+          action="action_student"
+          groups="exam_management.group_college_admin"/>
+
+
+</odoo>

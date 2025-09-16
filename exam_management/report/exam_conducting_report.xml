@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Report Template -->
+        <template id="exam_conducting_report_qweb_template">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.external_layout">
+
+                        <!-- First Page: Exam General Info -->
+                        <div class="page">
+                            <!-- Header -->
+                            <h2 style="text-align:center; background:#3f51b5; color:#fff; padding:10px; border-radius:5px;">
+                                Exam Attendance Sheet
+                            </h2>
+
+                            <!-- Exam General Info Table -->
+                            <table style="width:100%; margin-top:20px; font-size:14px; line-height:1.8;" border="0">
+                                <tr>
+                                    <td style="width:25%;"><strong>Exam Name:</strong></td>
+                                    <td><span t-field="o.exam_id.exam_name"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Exam Code:</strong></td>
+                                    <td><span t-field="o.exam_id.exam_code"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Course:</strong></td>
+                                    <td><span t-field="o.exam_id.course"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Class and Semester:</strong></td>
+                                    <td><span t-field="o.exam_id.class_semester"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Hall:</strong></td>
+                                    <td><span t-field="o.hall_id.name"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Invigilator:</strong></td>
+                                    <td><span t-field="o.invigilator_id.name"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Exam Status:</strong></td>
+                                    <td><span t-field="o.status"/></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- NEW PAGE FOR EACH SUBJECT -->
+                        <t t-foreach="o.exam_id.subject_ids" t-as="subj" t-foreach-index="subj_index">
+                            <div class="page" style="page-break-before:always;">
+                                <!-- Subject Header -->
+                                <h3 style="text-align:center; margin-bottom:10px;">
+                                    Subject: <span t-field="subj.name"/>
+                                </h3>
+
+                                <!-- Subject Info Table -->
+                                <table style="width:100%; margin-bottom:20px; font-size:13px;" border="0">
+                                    <tr>
+                                        <td style="width:30%;"><strong>Exam Date:</strong></td>
+                                        <td><span t-field="subj.exam_date"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Total Marks:</strong></td>
+                                        <td><span t-field="subj.total_marks"/></td>
+                                    </tr>
+                                </table>
+
+                                <!-- Student Attendance Table (Subject-wise) -->
+                                <div style="margin-top:10px;">
+                                    <table style="width:100%; border-collapse:collapse; font-size:12px;" border="1">
+                                        <thead>
+                                            <tr style="background-color:#f0f0f0;">
+                                                <th style="padding:8px; text-align:center; width:8%;">Sl. No</th>
+                                                <th style="padding:8px; text-align:center; width:15%;">Enrollment ID</th>
+                                                <th style="padding:8px; text-align:center; width:35%;">Student Name</th>
+                                                <th style="padding:8px; text-align:center; width:30%;">Signature</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Filter student lines per subject -->
+                                            <t t-set="filtered_lines" t-value="o.student_line_ids.filtered(lambda l: l.subject_id.id == subj.id)"/>
+                                            <t t-if="filtered_lines">
+                                                <t t-foreach="filtered_lines" t-as="line" t-foreach-index="line_index">
+                                                    <tr>
+                                                        <td style="padding:8px; text-align:center;">
+                                                            <t t-esc="line_index + 1"/>
+                                                        </td>
+                                                        <td style="padding:8px; text-align:center;">
+                                                            <span t-field="line.enrollment_id"/>
+                                                        </td>
+                                                        <td style="padding:8px;">
+                                                            <span t-field="line.student_id.student_name"/>
+                                                        </td>
+                                                        <td style="padding:8px; height:40px;"></td>
+                                                    </tr>
+                                                </t>
+                                            </t>
+                                            <t t-else="">
+                                                <tr>
+                                                    <td colspan="4" style="text-align:center; padding:20px;">
+                                                        No students assigned for this subject
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- SUBJECT-WISE SUMMARY TABLE -->
+                                <div style="margin-top:30px;">
+                                    <table style="width:50%; float:left; font-size:14px;" border="0">
+                                        <tr>
+                                            <td><strong>Total Students:</strong></td>
+                                            <td><t t-esc="len(filtered_lines)"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Present:</strong></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Absent:</strong></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Attendance %:</strong></td>
+                                            <td></td>
+                                        </tr>
+                                    </table>
+
+                                    <div style="float:right; text-align:center; width:40%;">
+                                        <p style="margin-top:50px;"><strong>Invigilator Signature</strong></p>
+                                        <div style="border-top:1px solid #000; margin-top:30px; width:200px; margin-left:auto;"></div>
+                                        <p style="margin-top:10px; font-size:12px;">
+                                            (<span t-field="o.invigilator_id.name"/>)
+                                        </p>
+                                        <p style="font-size:10px; margin-top:5px;">Date: ________________</p>
+                                    </div>
+                                    <div style="clear:both;"></div>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- Exam Instructions -->
+                        <t t-if="o.exam_id.instructions">
+                            <div class="page" style="page-break-before:always;">
+                                <h4>Exam Instructions</h4>
+                                <p t-field="o.exam_id.instructions"/>
+                            </div>
+                        </t>
+
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <!-- Report Action -->
+        <record id="action_report_exam_conducting" model="ir.actions.report">
+            <field name="name">Exam Conducting Report</field>
+            <field name="model">exam.conducting</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">exam_management.exam_conducting_report_qweb_template</field>
+            <field name="report_file">exam_management.exam_conducting_report_qweb_template</field>
+            <field name="print_report_name">'Exam_Attendance_' + (object.exam_id.exam_name or 'Unknown').replace('/', '_').replace(' ', '_')</field>
+            <field name="binding_model_id" ref="model_exam_conducting"/>
+            <field name="binding_type">report</field>
+            <field name="multi">True</field>
+        </record>
+    </data>
+</odoo>

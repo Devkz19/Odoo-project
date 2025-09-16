@@ -1,0 +1,63 @@
+{
+    'name': 'Examination Management System',
+    'version': '18.0.12.0',
+    'summary': 'Manage Exams, Student Registrations, Results and Scheduling',
+    'icon': '/exam_management/static/description/icon.png',
+    'sequence': -101,
+    'description': """
+        This module provides a complete solution for managing educational examinations,
+        including exam planning, student registration, scheduling, conducting exams,
+        and result management.
+    """,
+    'category': 'Education',
+    'website': 'https://www.odoo.com',
+    'depends': ['base', 'mail', 'web', 'portal', 'website'],
+    'data': [
+        'security/exam_security.xml',
+        'security/ir.model.access.csv',
+        'report/student_admitcard.xml',
+        'report/exam_planning_report.xml',
+        'report/exam_result_report.xml',
+        'report/exam_conducting_report.xml',
+        'wizard/exam_assignment_wizard_view.xml',
+        'views/student_portal_dashboard.xml',
+        'wizard/exam_seating_wizard.xml',
+        'views/student_registration_templates.xml',
+   
+        'views/exam_planning_views.xml',
+        'views/student_registration_views.xml',
+        'views/menu_view.xml',
+        'views/exam_result_view.xml',
+        'views/exam_management_dashboard.xml', 
+        'views/exam_conducting_view.xml',
+        'views/student_exam_assignment_views.xml',
+        'views/student_portal_template.xml',
+        'views/exam_hall_view.xml',
+        'views/exam_seating_view.xml',
+        # 'views/student_profile_view.xml',
+        # 'data/exam_data.xml',
+        'data/student_sequence.xml',
+        'data/invigilator_mail_template.xml',
+        'data/registration_mail_template.xml',
+    ],
+    'demo': [],
+    
+'assets': {
+    'web.assets_backend': [
+        'exam_management/static/src/js/exam_dashboard.js',
+    #    'exam_management/static/lib/jquery.dataTables.min.js',
+    #     'exam_management/static/lib/jquery.dataTables.min.css',
+    #     'exam_management/static/src/js/exam_dashboard.js',
+    ],
+    'web.assets_frontend': [
+        'exam_management/static/src/css/portal.css',
+    ],
+},
+
+    'installable': True,
+    'application': True,
+    'auto_install': False,
+    'license': 'LGPL-3',
+    # 'icon': 'static/description/icon.png',
+   
+}

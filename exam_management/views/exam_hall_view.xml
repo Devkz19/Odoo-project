@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+       <!-- Form View -->
+    <record id="view_exam_hall_form" model="ir.ui.view">
+        <field name="name">exam.hall.form</field>
+        <field name="model">exam.hall</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                      <button name="%(action_exam_seating_wizard)d"
+                            string="Generate Seating"
+                            type="action"
+                            class="btn-primary"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="exam_id"/>
+                        <field name="name"/>
+                        <field name="code"/>
+                        <field name="location"/>
+                        <field name="capacity"/>
+                        <field name="active"/>
+                    </group>
+                    <group>
+                        <field name="note" widget="text"/>
+                    </group>
+                </sheet>
+                <chatter>
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="activity_ids" widget="mail_activity"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                </chatter>
+            </form>
+        </field>
+    </record>
+
+     <!-- List View -->
+    <record id="view_exam_hall_list" model="ir.ui.view">
+        <field name="name">exam.hall.list</field>
+        <field name="model">exam.hall</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="exam_id"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="location"/>
+                <field name="capacity"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- graph view -->
+     <record id="view_exam_seating_graph" model="ir.ui.view">
+        <field name="name">exam.seating.graph</field>
+        <field name="model">exam.seating</field>
+        <field name="arch" type="xml">
+            <!-- Bar chart: X=Hall, Series=Exam, Y=Count of allocations (students) -->
+            <graph string="Seats per Hall (Students Allocated)" type="bar">
+                <field name="hall_id" type="row"/>
+                <field name="exam_id" type="col"/>
+                <field name="id" type="measure" operator="count" string="Allocated Students"/>
+            </graph>
+        </field>
+    </record>
+
+     <!-- Kanban View -->
+    <record id="view_exam_hall_kanban" model="ir.ui.view">
+        <field name="name">exam.hall.kanban</field>
+        <field name="model">exam.hall</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="exam_id" class="o_kanban_exam_hall">
+                <field name="exam_id"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="location"/>
+                <field name="capacity"/>
+                <field name="active"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_kanban_record">
+                            <strong><field name="name"/></strong> <field name="code"/>
+                            <div>Location: <field name="location"/></div>
+                            <div>Capacity: <field name="capacity"/></div>
+                            <div>Status: 
+                                <t t-if="record.active.raw_value">Active</t>
+                                <t t-else="record.active.raw_value">Inactive</t>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action -->
+     <record id="action_exam_hall" model="ir.actions.act_window">
+        <field name="name">Exam Halls</field>
+        <field name="res_model">exam.hall</field>
+        <field name="view_mode">list,form,kanban,graph</field>
+    </record>
+
+    <!--  menubar option -->
+    <menuitem id="menu_exam_arrangement_root"
+              name="Exam Arrangement"
+              parent="menu_exam_management_root"
+              groups="exam_management.group_college_admin"
+              sequence="40"/>
+
+   <!-- Child Menu: Exam Halls -->
+    <menuitem id="menu_exam_hall"
+              name="Exam Halls"
+              parent="menu_exam_arrangement_root"
+              action="action_exam_hall"
+              sequence="10"
+              groups="exam_management.group_college_admin"/>        
+    
+</odoo>

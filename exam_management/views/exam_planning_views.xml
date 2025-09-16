@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>    
+    <!-- List View -->
+    <record id="view_exam_planning_list" model="ir.ui.view">
+        <field name="name">exam.planning.list</field>
+        <field name="model">exam.planning</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="exam_code"/>
+                <field name="exam_name"/>
+                <field name="subject_ids" widget="many2many_tags"/>
+                <field name="class_semester"/> 
+                <field name="course"/>
+                <field name="exam_start_date"/>
+                <field name="exam_end_date"/>
+                <field name="exam_time" widget="float_time"/>
+                <field name="total_marks"/>
+                <field name="registration_deadline"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Kanban View -->
+    <record id="view_exam_planning_kanban" model="ir.ui.view">
+        <field name="name">exam.planning.kanban</field>
+        <field name="model">exam.planning</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="exam_name"/>
+                <field name="exam_start_date"/>
+                <field name="exam_end_date"/>
+                <field name="course"/>
+                <field name="subject_ids"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <strong><field name="exam_name"/></strong><br/>
+                            <span><field name="course"/></span><br/>
+                            <span>Start: <field name="exam_start_date"/></span><br/>
+                            <span>End: <field name="exam_end_date"/></span><br/>
+                            <span>Subjects: <field name="subject_ids" widget="many2many_tags"/></span>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Calendar View -->
+    <record id="view_exam_planning_calendar" model="ir.ui.view">
+        <field name="name">exam.planning.calendar</field>
+        <field name="model">exam.planning</field>
+        <field name="arch" type="xml">
+            <calendar
+                string="Exam Calendar"
+                date_start="exam_start_date"
+                date_stop="exam_end_date"
+                color="course">
+                
+                <field name="exam_name"/>
+                <field name="course"/>
+                <field name="class_semester"/>
+                <field name="subject_ids"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_exam_planning_form" model="ir.ui.view">
+        <field name="name">exam.planning.form</field>
+        <field name="model">exam.planning</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="%(action_exam_assignment_wizard)d"
+                            string="Assign Exam"
+                            type="action"
+                            class="btn-primary"/>
+
+                    <button name="action_new"
+                                    type="object"
+                                    string="New"
+                                    class="btn-primary"
+                                    invisible="state == 'new'"/>
+                                    
+                    <button name="action_confirm"
+                                    type="object"
+                                    string="Confirm"
+                                    class="btn-secondary"
+                                    invisible="state == 'confirm'"/>
+
+                        <field name="state" widget="statusbar" options="{'clickable': True}" />
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="exam_name" placeholder="Exam Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="exam_code" readonly="state == 'confirm'"/>
+                            <field name="class_semester" readonly="state == 'confirm'" />
+                            <field name="course" readonly="state == 'confirm'"/>
+                            <field name="exam_start_date" readonly="state == 'confirm'"/>
+                            <field name="exam_end_date" readonly="state == 'confirm'"/>
+                            <field name="exam_time" widget="float_time" readonly="state == 'confirm'"/>
+                        </group>
+                        <group>
+                            <field name="duration" readonly="state == 'confirm'"/>
+                            <field name="total_marks" readonly="state == 'confirm'"/>
+                            <field name="registration_deadline" readonly="state == 'confirm'"/>
+                            <field name="active" readonly="state == 'confirm'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Subjects">
+                            <field name="subject_ids" readonly="state == 'confirm'">
+                                <list editable="bottom">
+                                    <field name="name" readonly="state == 'confirm'"/>
+                                    <field name="total_marks" readonly="state == 'confirm'"/>
+                                    <field name="exam_date" readonly="state == 'confirm'"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Instructions">
+                            <field name="instructions" placeholder="Enter exam instructions here..." readonly="state == 'confirm'"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter>
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </chatter>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View  -->
+    <record id="view_exam_planning_search" model="ir.ui.view">
+    <field name="name">exam.planning.search</field>
+    <field name="model">exam.planning</field>
+    <field name="arch" type="xml">
+        <search string="Search Exams">
+            <!-- Quick search fields -->
+            <field name="exam_name" string="Exam Name"/>
+            <field name="course" string="Course"/>
+            <field name="class_semester" string="Semester"/>
+            <field name="exam_code" string="Exam Code"/>
+
+            <group expand="0" string="Group By">
+                <filter string="Course" name="group_by_course" context="{'group_by':'course'}"/>
+                <filter string="Semester" name="group_by_semester" context="{'group_by':'class_semester'}"/>
+            </group>
+
+            <searchpanel>
+                <field name="course" string="Courses" icon="fa-book"/>
+                <field name="class_semester" string="Semester" icon="fa-graduation-cap"/>
+            </searchpanel>
+        </search>
+    </field>
+</record>
+
+    <!-- Action -->
+    <record id="action_exam_planning" model="ir.actions.act_window">
+        <field name="name">Exam Planning</field>
+        <field name="res_model">exam.planning</field>
+        <field name="view_mode">list,search,form,kanban,calendar</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first exam plan!
+            </p>
+            <p>
+                Plan and schedule exams for students.
+            </p>
+        </field>
+    </record>
+</odoo>

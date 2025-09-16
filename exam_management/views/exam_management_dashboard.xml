@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Dashboard Form View -->
+    <record id="view_exam_dashboard_form" model="ir.ui.view">
+        <field name="name">exam.dashboard.form</field>
+        <field name="model">exam.dashboard</field>
+        <field name="arch" type="xml">
+            <form string="Exam Dashboard" create="false" edit="false" delete="false" js_class="exam_dashboard">
+                <sheet>
+                    <h2 class="text-center fw-bold mb-4">
+                        Exam Management Dashboard
+                    </h2>
+                 
+                    <div class="d-flex justify-content-end mb-3 align-items-center">
+                        <span class="me-2 fw-bold">Filter by Course:</span>
+                        <select id="courseFilter" class="form-select w-auto me-2">
+                            <option value="">All Courses</option>
+                            <option value="IT">Information Technology</option>
+                            <option value="CS">Computer Science</option>
+                            <option value="EC">Electronics</option>
+                            <option value="ME">Mechanical</option>
+                            <option value="CE">Civil</option>
+                            <option value="EE">Electrical</option>
+                            <option value="BT">Biotechnology</option>
+                            <option value="CH">Chemical</option>
+                        </select>
+                    </div>
+
+                    <!-- KPI Row -->
+                    <div class="row">
+                        <!-- Total Exams -->
+                        <div class="col-md-3 mb-4">
+                            <div class="card h-100 bg-primary text-white text-center kpi-card" data-action="exams">
+                                <div class="card-body">
+                                    <h5>Total Exams</h5>
+                                    <h3><field name="total_exams" readonly="1"/></h3>
+                                    <button type="object" name="action_view_exam_planning" class="btn btn-light btn-sm mt-2">More info</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total Students -->
+                        <div class="col-md-3 mb-4">
+                            <div class="card h-100 bg-success text-white text-center kpi-card" data-action="students">
+                                <div class="card-body">
+                                    <h5>Total Students</h5>
+                                    <h3><field name="total_students" readonly="1"/></h3>
+                                    <button type="object" name="action_view_student_registration" class="btn btn-light btn-sm mt-2">More info</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total Halls -->
+                        <div class="col-md-3 mb-4">
+                            <div class="card h-100 bg-info text-white text-center kpi-card" data-action="halls">
+                                <div class="card-body">
+                                    <h5>Total Halls</h5>
+                                    <h3><field name="total_halls" readonly="1"/></h3>
+                                    <button type="object" name="action_view_exam_hall" class="btn btn-light btn-sm mt-2">More info</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total Seatings -->
+                        <div class="col-md-3 mb-4">
+                            <div class="card h-100 bg-warning text-white text-center kpi-card" data-action="seatings">
+                                <div class="card-body">
+                                    <h5>Total Seatings</h5>
+                                    <h3><field name="total_seatings" readonly="1"/></h3>
+                                    <button type="object" name="action_view_exam_seating" class="btn btn-light btn-sm mt-2">More info</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row for Upcoming Exams -->
+                    <div class="row mt-4">
+                         <div class="col-md-6">
+                            <div class="card shadow-sm">
+                                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0"><i class="fa fa-calendar-alt"></i> Upcoming Exams</h5>
+                                </div>
+                                <div class="card-body p-0" id="upcoming-exams-container">
+                                    <field name="upcoming_exams_table" widget="html" nolabel="1"/>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Exams today card -->
+                        <div class="col-md-6">
+                            <div class="card shadow-sm">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0"><i class="fa fa-clock"></i> Exams Today</h5>
+                                </div>
+                                <div class="card-body p-0" id="exams-today-container">
+                                    <field name="exams_today_table" widget="html" nolabel="1"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Row for Unassigned Students -->
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <div class="card border-primary shadow-sm">
+                                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0"><i class="fa fa-exclamation-triangle"></i> Unassigned Students</h5>
+                                </div>
+                                <div class="card-body p-0" id="unassigned-students-container">
+                                    <field name="unassigned_students_table" widget="html" nolabel="1"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                 
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action Window -->
+    <record id="action_exam_dashboard" model="ir.actions.act_window">
+        <field name="name">Exam Dashboard</field>
+        <field name="res_model">exam.dashboard</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+        <field name="view_id" ref="view_exam_dashboard_form"/>
+        <field name="context">{}</field>
+    </record>
+
+    <!-- Server Action for Dashboard -->
+    <record id="server_action_exam_dashboard" model="ir.actions.server">
+        <field name="name">Open Exam Dashboard</field>
+        <field name="model_id" ref="model_exam_dashboard"/>
+        <field name="state">code</field>
+        <field name="code">
+action = model.open_dashboard()
+        </field>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem id="menu_exam_dashboard"
+          name="Dashboard"
+          parent="menu_exam_management_root"
+          action="action_exam_dashboard"
+          sequence="0"
+          groups="exam_management.group_college_admin"/>
+</odoo>

@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <template id="portal_my_home_student" name="Student Dashboard" inherit_id="portal.portal_my_home" priority="30">
+        <xpath expr="//div[@id='portal_common_category']" position="inside">    
+            <div class="o_portal_index_card col-md-6">
+                <a t-att-href="'/my/student_dashboard'" class="o_portal_doc_card">
+                    <div class="o_portal_doc_icon">
+                        <img src="/exam_management/static/src/img/school-flag-svgrepo-com.svg"
+                            alt="Student" style="max-height:48px;"/>
+                    </div>
+                    <div class="o_portal_doc_content">
+                        <h3>Student Register</h3>
+                        <p>View your profile, assigned exams, and results.</p>
+                    </div>
+                </a>
+            </div>
+        </xpath>
+    </template>
+
+    <!-- Profile Page -->
+    <template id="student_portal_profile" name="Student Profile">
+        <t t-call="portal.portal_layout">
+
+
+            <div class="container my-4">
+                <div class="card shadow-sm p-4">
+                    <h2>My Profile</h2>
+                    <hr/>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Name:</strong> <t t-esc="student.student_name"/></p>
+                            <p><strong>Email:</strong> <t t-esc="student.email"/></p>
+                            <p><strong>Phone:</strong> <t t-esc="student.phone"/></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Enrollment ID:</strong> <t t-esc="student.student_id"/></p>
+                            <p><strong>Course:</strong><t t-esc="student._fields['course'].convert_to_export(student.course, student)"/></p>
+                            <p><strong>Semester:</strong> <t t-esc="student._fields['class_semester'].convert_to_export(student.class_semester, student)"/></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Assigned Exams -->
+                <div class="card shadow-sm p-4 mt-4">
+                    <h2>Assigned Exams</h2>
+                    <hr/>
+                    <t t-if="assigned_exams">
+                        <!-- Download Admit Card Button -->
+                             <div class="text-end mt-3">
+                                <a t-att-href="'/my/admit_card/' + str(assigned_exams[0].exam_id.id) + '/download'"
+                                    class="btn btn-outline-primary">
+                                    <i class="fa fa-download"></i> Download Admit Card
+                                </a>
+                            </div> <br> </br>
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Exam</th>
+                                    <th>Subject</th>
+                                    <th>Course</th>
+                                    <th>Semester</th>
+                                    <th>Subject Exam Date</th>
+                                    <th>Time</th>
+                                    <th>Duration</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="assigned_exams" t-as="exam">
+                                    <tr>
+                                        <td><t t-esc="exam.exam_id.exam_name"/></td>
+                                        <td><t t-esc="exam.subject_id.name"/></td>
+                                        <td><t t-esc="dict(student._fields['course'].selection).get(student.course)"/></td>
+                                        <td><t t-esc="dict(student._fields['class_semester'].selection).get(student.class_semester)"/></td>
+                                        <td><t t-esc="exam.subject_id.exam_date" t-options='{"widget": "date"}'/></td>
+                                        <td><t t-esc="exam.exam_id.exam_time"/></td>
+                                        <td><t t-esc="exam.exam_id.duration"/> hours</td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </t>
+                    <t t-else="">
+                        <p>No exams assigned yet.</p>
+                    </t>
+                </div>
+
+                <!-- Exam Results -->
+                <div class="card shadow-sm p-4 mt-4">
+                    <h2>Your Results</h2>
+                    <hr/>
+                    <t t-if="assigned_exams and results">
+                        <div class="accordion" id="exam_results_accordion">
+                            <t t-foreach="results" t-as="res" t-foreach-index="idx">
+                                <div class="accordion-item mb-3">
+                                    <h5 class="accordion-header" t-attf-id="heading-{{res.id}}">
+                                        <button class="accordion-button collapsed"
+                                                type="button"
+                                                data-bs-toggle="collapse"
+                                                t-attf-data-bs-target="#collapse-{{res.id}}"
+                                                aria-expanded="false"
+                                                t-attf-aria-controls="collapse-{{res.id}}">
+                                            <t t-esc="res.exam_id.exam_name"/>
+                                            <span t-if="res.result_status == 'pass'" class="badge bg-success ms-2"><t t-esc="res.result_status.capitalize()"/></span>
+                                            <span t-if="res.result_status == 'fail'" class="badge bg-danger ms-2"><t t-esc="res.result_status.capitalize()"/></span>
+                                        </button>
+                                    </h5>
+
+                                    <div t-attf-id="collapse-{{res.id}}"
+                                        class="accordion-collapse collapse"
+                                        t-attf-aria-labelledby="heading-{{res.id}}"
+                                        data-bs-parent="#exam_results_accordion">
+                                        <div class="accordion-body">
+                                            <div class="row mb-3">
+                                                <div class="col-md-3"><strong>Marks Obtained:</strong> <t t-esc="res.marks_obtained"/></div>
+                                                <div class="col-md-3"><strong>Total Marks:</strong> <t t-esc="res.total_marks"/></div>
+                                                <div class="col-md-3"><strong>Percentage:</strong> <t t-esc="round(res.percentage, 2)"/>%</div>
+                                                <div class="col-md-3"><strong>Grade:</strong> <t t-esc="res.grade"/></div>
+                                            </div>
+                                            
+                                            <h6 class="mt-2">Subject-wise Breakdown</h6>
+                                            <table class="table table-sm table-bordered">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th>Subject</th>
+                                                        <th>Marks Obtained</th>
+                                                        <th>Total Marks</th>
+                                                        <th>Percentage</th>
+                                                        <th>Grade</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <t t-foreach="res.subject_line_ids" t-as="line">
+                                                        <tr>
+                                                            <td><t t-esc="line.subject_id.name"/></td>
+                                                            <td><t t-esc="line.marks_obtained"/></td>
+                                                            <td><t t-esc="line.total_marks"/></td>
+                                                            <td><t t-esc="round(line.percentage, 2)"/>%</td>
+                                                            <td><t t-esc="line.grade"/></td>
+                                                        </tr>
+                                                    </t>
+                                                </tbody>
+                                            </table>
+                                            <!-- Download Button -->
+                                            <div class="mt-3 text-end">
+                                                <a t-att-href="'/my/result/%s/download' % res.id"
+                                                class="btn btn-primary">
+                                                    <i class="fa fa-download"></i> Download Result
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </t>
+                    <t t-elif="assigned_exams and not results">
+                        <p>Results are not published yet.</p>
+                    </t>
+                    <t t-else="">
+                        <p>You have not been assigned any exam, so no results are available.</p>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="student_portal_breadcrumb_override" inherit_id="portal.portal_breadcrumbs" name="Student Portal Breadcrumbs Override">
+        <xpath expr="//ol" position="replace">
+            <t t-if="request.httprequest.path.startswith('/my/student_dashboard')">
+                <ol class="o_portal_submenu breadcrumb mb-0 flex-grow-1 px-0">
+                    <li class="breadcrumb-item ms-1">
+                        <a href="/my/home" aria-label="Home" title="Home"><i class="fa fa-home"></i></a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="/my/student_dashboard">Student Dashboard</a>
+                    </li>
+                </ol>
+            </t>
+            <t t-else="">
+                <ol class="o_portal_submenu breadcrumb mb-0 flex-grow-1 px-0">
+                    <li class="breadcrumb-item ms-1"><a href="/my/home" aria-label="Home" title="Home"><i class="fa fa-home"/></a></li>
+                    <t t-foreach="breadcrumbs" t-as="breadcrumb">
+                        <li t-if="not breadcrumb.get('active')" class="breadcrumb-item">
+                            <a t-att-href="breadcrumb.get('url')"><t t-esc="breadcrumb.get('name')"/></a>
+                        </li>
+                        <li t-else="" class="breadcrumb-item active">
+                            <t t-esc="breadcrumb.get('name')"/>
+                        </li>
+                    </t>
+                </ol>
+            </t>
+        </xpath>
+    </template>
+</odoo>

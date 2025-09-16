@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Form view -->
+     <record id="view_exam_seating_form" model="ir.ui.view">
+        <field name="name">exam.seating.form</field>
+        <field name="model">exam.seating</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <!-- <button name="action_auto_assign" type="object" string="Auto Assign Seats" class="btn-primary"/> -->
+                </header>
+                <sheet>
+                    <group>
+                        <field name="exam_id"/>
+                        <field name="hall_id"/>
+                        <field name="seat_number"/>
+                  
+                        <!-- <field name="seat_assignment" readonly="1"/>  -->
+                    </group>
+                    <group>
+                        <field name="student_id"/>
+                       
+                    </group>
+                </sheet>
+                <chatter>
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </chatter>
+            </form>
+        </field>
+    </record> 
+
+    <!-- List View -->
+   <record id="view_exam_seating_list" model="ir.ui.view">
+    <field name="name">exam.seating.list</field>
+    <field name="model">exam.seating</field>
+    <field name="arch" type="xml">
+        <list>
+            <field name="exam_id"/>
+            <field name="hall_id"/>
+            <field name="student_id"/>
+            <field name="seat_number"/>
+        </list>
+    </field>
+</record>
+
+    <!-- Search view -->
+    <record id="view_exam_seating_search" model="ir.ui.view">
+        <field name="name">exam.seating.search</field>
+        <field name="model">exam.seating</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="exam_id"/>
+                <field name="hall_id"/>
+                <field name="student_id"/>
+                <filter string="By Exam" name="filter_exam" domain="[]"/>
+                <filter string="By Hall" name="filter_hall" domain="[]"/>
+            </search>
+        </field>
+    </record>
+   
+    <!-- Kanban View -->
+    <record id="view_exam_seating_kanban" model="ir.ui.view">
+        <field name="name">exam.seating.kanban</field>
+        <field name="model">exam.seating</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_kanban_card">
+                            <strong><field name="student_id"/></strong>
+                            <div>Exam: <field name="exam_id"/></div>
+                            <div>Hall: <field name="hall_id"/></div>
+                            <div>Seat: <field name="seat_number"/></div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Filter by Hall (hall_id) -->
+    <record id="exam_seating_filter_by_hall" model="ir.ui.view">
+        <field name="name">exam.seating.filter.by.hall</field>
+        <field name="model">exam.seating</field>
+        <field name="inherit_id" ref="exam_management.view_exam_seating_search"/>
+        <field name="arch" type="xml">
+            <field name="hall_id" position="after">
+                <filter string="Hall" name="filter_by_hall_id" domain="['|',('hall_id','!=',False),('hall_id','=',False)]" context="{'group_by':'hall_id'}"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_exam_seating" model="ir.actions.act_window">
+        <field name="name">Exam Seating</field>
+        <field name="res_model">exam.seating</field>
+        <field name="view_mode">list,form,kanban</field>
+    </record>
+    
+    <!-- child menu for exam seating -->
+    <menuitem id="menu_exam_seating"
+              name="Exam Seating"
+              parent="menu_exam_arrangement_root"
+              action="action_exam_seating"
+              groups="exam_management.group_college_admin"
+              sequence="20"/>
+</odoo>

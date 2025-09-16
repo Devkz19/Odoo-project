@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <!-- QWeb Template for Exam Admit Card -->
+    <template id="exam_admit_card_qweb_template">
+      <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="o">
+          <t t-call="web.external_layout">
+            <div class="page">
+              <!-- Header -->
+              <h2 style="text-align:center; background-color:#3f51b5; color:white; padding:10px; border-radius:5px;">
+                Exam Admit Card
+              </h2>
+              
+              <div style="border:1px solid #ddd; border-radius:10px; padding:20px; margin-top:10px; font-size:14px;">
+                
+                <!-- Student Details -->
+                <h4 style="margin-bottom:10px; border-bottom:1px solid #ccc; padding-bottom:5px;">
+                  Student Details
+                </h4>
+                <table style="width:100%; line-height:1.8;">
+                  <tr>
+                    <td><strong>Name:</strong></td>
+                    <td><span t-field="o.student_id.student_name"/></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Enrollment Number:</strong></td>
+                    <td><span t-field="o.student_id.student_id"/></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Course:</strong></td>
+                    <td><span t-field="o.exam_id.course"/></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Class and Semester:</strong></td>
+                    <td><span t-field="o.exam_id.class_semester"/></td>
+                  </tr>
+                </table>
+                
+                <br/>
+                
+                <!-- Exam Details -->
+                <h4 style="margin-bottom:10px; border-bottom:1px solid #ccc; padding-bottom:5px;">
+                  Exam Details
+                </h4>
+                <table style="width:100%; line-height:1.8;">
+                  <tr>
+                    <td><strong>Exam Name:</strong></td>
+                    <td><span t-field="o.exam_id.exam_name"/></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Exam Code:</strong></td>
+                    <td><span t-field="o.exam_id.exam_code"/></td>
+                  </tr>
+                </table>
+                
+                <br/>
+
+                <!-- Multiple Subjects Table -->
+                <h4 style="margin-bottom:10px; border-bottom:1px solid #ccc; padding-bottom:5px;">
+                  Subjects
+                </h4>
+                <table style="width:100%; border-collapse:collapse; font-size:13px;" border="1">
+                  <thead>
+                    <tr style="background-color:#f0f0f0;">
+                      <th style="padding:6px; text-align:center; width:8%;">Sl. No</th>
+                      <th style="padding:6px; text-align:left; width:40%;">Subject Name</th>
+                      <th style="padding:6px; text-align:center; width:25%;">Exam Date</th>
+                      <th style="padding:6px; text-align:center; width:15%;">sign</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <t t-if="o.exam_id.subject_ids">
+                      <t t-foreach="o.exam_id.subject_ids" t-as="subj" t-foreach-index="subj_index">
+                        <tr>
+                          <td style="padding:6px; text-align:center;">
+                            <t t-esc="subj_index + 1"/>
+                          </td>
+                          <td style="padding:6px;">
+                            <span t-field="subj.name"/>
+                          </td>
+                          <td style="padding:6px; text-align:center;">
+                            <span t-field="subj.exam_date"/>
+                          </td>
+                          <td style="padding:6px; text-align:center;">
+                            <span />
+                          </td>
+                        </tr>
+                      </t>
+                    </t>
+                    <t t-else="">
+                      <tr>
+                        <td colspan="4" style="text-align:center; padding:10px; color:#999;">
+                          No subjects assigned
+                        </td>
+                      </tr>
+                    </t>
+                  </tbody>
+                </table>
+
+                <br/>
+                
+                <!-- Hall & Seating Details -->
+                <h4 style="margin-bottom:10px; border-bottom:1px solid #ccc; padding-bottom:5px;">
+                  Hall and Seating
+                </h4>
+                <table style="width:100%; line-height:1.8;">
+                  <tr>
+                    <td><strong>Hall:</strong></td>
+                    <td><span t-field="o.hall_id.name"/></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Location:</strong></td>
+                    <td><span t-field="o.hall_id.location"/></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Seat Number:</strong></td>
+                    <td><span t-field="o.seat_number"/></td>
+                  </tr>
+                </table>
+                
+                <br/>
+                
+                <!-- Footer -->
+                <div style="margin-top:30px; text-align:right;">
+                  <p><strong>Authorized Signatory</strong></p>
+                </div>
+                
+              </div>
+            </div>
+          </t>
+          <!-- Page break after each student -->
+          <div class="page-break"></div>
+        </t>
+      </t>
+    </template>
+
+    <!-- Report Action -->
+    <record id="action_report_exam_admit_card" model="ir.actions.report">
+      <field name="name">Exam Admit Card</field>
+      <field name="model">exam.seating</field>
+      <field name="report_type">qweb-pdf</field>
+      <field name="report_name">exam_management.exam_admit_card_qweb_template</field>
+      <field name="report_file">exam_management.exam_admit_card_qweb_template</field>
+      <field name="print_report_name">'Admit Card'</field>
+      <field name="binding_model_id" ref="model_exam_seating"/>
+      <field name="binding_type">report</field>
+      <field name="multi">True</field>
+    </record>
+    
+  </data>
+</odoo>

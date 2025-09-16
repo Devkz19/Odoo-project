@@ -1,0 +1,10 @@
+<odoo>
+    <record id="seq_student_registration" model="ir.sequence">
+        <field name="name">Student Enrollment</field>
+        <field name="code">student.registration</field>
+        <field name="prefix">ENR-</field>
+        <field name="padding">4</field>
+        <field name="number_next_actual">1</field>
+        <field name="number_increment">1</field>
+    </record>
+</odoo>

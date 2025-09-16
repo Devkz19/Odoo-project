@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Main Menu for College Admin -->
+        <menuitem id="menu_exam_management_root"
+                  name="Exam Management"
+                  sequence="10"
+                  web_icon="exam_management,static/description/icon.png"
+                  groups="exam_management.group_college_admin"/>
+        
+        <!-- Submenus -->
+        <menuitem id="menu_exam_planning"
+                  name="Exam Planning"
+                  parent="menu_exam_management_root"
+                  action="action_exam_planning"
+                  sequence="1"
+                  groups="exam_management.group_college_admin"/>
+
+
+         <record id="contacts.menu_contacts" model="ir.ui.menu">
+            <field name="name">Student Registration</field>
+        </record>          
+
+
+        <!-- Portal Menu for Students -->
+        <record id="menu_student_registration_website" model="website.menu">
+            <field name="name">Student Registration</field>
+            <field name="url">/student/register</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence" type="int">50</field>
+        </record>
+
+        <record id="menu_student_profile_website" model="website.menu">
+            <field name="name">My Profile</field>
+            <field name="url">/student/profile</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence" type="int">60</field>
+      </record>
+    </data>
+</odoo>

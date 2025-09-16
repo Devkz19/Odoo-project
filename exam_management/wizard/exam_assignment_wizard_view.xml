@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Wizard Form -->
+    <record id="view_assign_exam_wizard_form" model="ir.ui.view">
+        <field name="name">exam.assignment.wizard.form</field>
+        <field name="model">exam.assignment.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Assign Exam">
+                <group>
+                    <field name="exam_id"/>
+                    <!-- <field name="exam_name" readonly="1"/> -->
+                    <field name="class_semester"/>
+                    <field name="course"/>
+                    <!-- <field name="student_ids" widget="many2many_tags"/> -->
+                </group>
+                <footer>
+                    <button string="Assign" type="object" name="assign_exam" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    
+    <!-- Action -->
+    <record id="action_exam_assignment_wizard" model="ir.actions.act_window">
+        <field name="name">Assign Exams to Students</field>
+        <field name="res_model">exam.assignment.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

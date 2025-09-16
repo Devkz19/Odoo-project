@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Invigilator Assignment Mail Template -->
+    <record id="mail_template_invigilator_assignment" model="mail.template">
+        <field name="name">Invigilator Assignment Email</field>
+        <field name="model_id" ref="exam_management.model_exam_conducting"/>
+        <field name="subject">Exam Invigilation Assigned: </field>
+        <field name="email_to">{{object.invigilator_id.email}}</field>
+        <field name="email_from">{{user.email or 'noreply@college.com'}}</field>
+        
+        <field name="description">Email sent to invigilator when assigned to an exam</field>
+
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; font-size: 14px; color: #333;">
+                <p>Dear <strong><t t-out="object.invigilator_id.name or 'Invigilator'"/></strong>,</p>
+
+                <p>
+                    You have been assigned as the invigilator for the following examination.
+                </p>
+
+                <p><strong>Exam Details:</strong></p>
+                <ul>
+                    <li><strong>Exam:</strong> <t t-out="object.exam_id.exam_name"/></li>
+                    <li><strong>Start Date:</strong> <t t-out="object.exam_start_date"/></li>
+                    <li><strong>End Date:</strong> <t t-out="object.exam_end_date"/></li>
+                    <li><strong>Time:</strong> <t t-out="object.exam_id.format_float_time(object.exam_id.exam_time)"/></li>
+                    <li><strong>Duration (Hours):</strong> <t t-out="object.exam_id.duration"/></li>
+                    <li><strong>Hall:</strong> <t t-out="object.hall_id.name"/></li>
+                    <li><strong>Location:</strong> <t t-out="object.hall_id.location or 'N/A'"/></li>
+                </ul>
+
+                <p>Kindly ensure your presence on time and adhere to the institution's examination protocols.</p>
+                <p>Best regards,<br/>
+                <strong><t t-out="user.company_id.name or 'College Administration'"/></strong></p>
+            </div>
+        </field>
+
+        <field name="auto_delete" eval="True"/>
+    </record>
+</odoo>

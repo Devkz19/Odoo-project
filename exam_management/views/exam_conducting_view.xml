@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- List View -->
+    <record id="view_exam_conducting_list" model="ir.ui.view">
+        <field name="name">exam.conducting.list</field>
+        <field name="model">exam.conducting</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="exam_id" />
+                <field name="hall_id" />
+                <field name="invigilator_id" />
+                <field name="state" />
+                <field name="exam_start_date" string="Start Date" />
+                <field name="exam_end_date" string="End Date" />
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_exam_conducting_form" model="ir.ui.view">
+        <field name="name">exam.conducting.form</field>
+        <field name="model">exam.conducting</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <!-- <button name="action_start_exam" type="object" string="Start Exam"
+                        class="btn-primary" invisible="status != 'not_started'" />
+                    <button name="action_end_exam" type="object" string="End Exam"
+                        class="btn-danger" invisible="status != 'ongoing'" /> -->
+                    <button name="action_send_invigilator_email"
+                        string="Send Invigilator Email"
+                        type="object"
+                        class="btn-primary" />
+
+                    <button name="action_start"
+                            type="object"
+                            string="Start Exam"
+                            class="btn-primary"
+                            invisible="state != 'start'"/>
+
+                    <button name="action_end"
+                            type="object"
+                            string="End Exam"
+                            class="btn-secondary"
+                            invisible="state != 'ongoing'"/>
+
+                    <field name="state" widget="statusbar" options="{'clickable': True}" statusbar_visible="start,ongoing,end"/>
+  
+                </header>
+                <sheet>
+                    <group>
+                        <field name="exam_id" />
+                        <field name="hall_id" />
+                        <field name="invigilator_id" />
+                        <field name="state" readonly="1" />
+                        <field name="exam_start_date" string="Start Date" readonly="1" />
+                        <field name="exam_end_date" string="End Date" readonly="1" />
+                    </group>
+                    <notebook>
+                        <page string="Student Attendance">
+                            <field name="student_line_ids">
+                                <list editable="bottom">
+                                    <field name="assignment_id" />
+                                    <field name="student_id" readonly="1" />
+                                    <field name="subject_id" readonly="1" />
+                                    <field name="enrollment_id" readonly="1" />
+                                    <field name="attendance" />
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter>
+                    <field name="message_follower_ids" widget="mail_followers" />
+                    <field name="activity_ids" widget="mail_activity" />
+                    <field name="message_ids" widget="mail_thread" />
+                </chatter>
+            </form>
+        </field>
+    </record>
+
+    <!-- kanban view -->
+    <record id="view_exam_conducting_kanban" model="ir.ui.view">
+        <field name="name">exam.conducting.kanban</field>
+        <field name="model">exam.conducting</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state">
+                <field name="state" />
+                <field name="exam_id" />
+                <field name="hall_id" />
+                <field name="invigilator_id" />
+                <field name="exam_start_date" />
+                <field name="exam_end_date" />
+
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="o_kanban_record">
+                            <strong>
+                                <field name="exam_id" />
+                            </strong>
+                            <div>Hall: <field name="hall_id" /></div>
+                            <div>Invigilator: <field name="invigilator_id" /></div>
+                            <div>Status: <field name="state" /></div>
+                            <div>Start: <field name="exam_start_date" /></div>
+                            <div>End: <field name="exam_end_date" /></div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Calender view -->
+    <record id="view_exam_conducting_calendar" model="ir.ui.view">
+        <field name="name">exam.conducting.calendar</field>
+        <field name="model">exam.conducting</field>
+        <field name="arch" type="xml">
+            <calendar string="Exam Schedule" 
+                  date_start="exam_start_date" 
+                  date_stop="exam_end_date"
+                  color="state">
+        
+            <field name="exam_id"/>
+            <field name="hall_id"/>
+            <field name="invigilator_id"/>
+            
+        </calendar>
+        </field>
+    </record>
+
+    <!-- Search view -->
+    <record id="view_exam_conducting_search" model="ir.ui.view">
+        <field name="name">exam.conducting.search</field>
+        <field name="model">exam.conducting</field>
+        <field name="arch" type="xml">
+            <search string="Exam Conducting Search">
+                <!-- Search fields -->
+                <field name="exam_id" string="Exam" />
+                <field name="hall_id" string="Hall" />
+                <field name="invigilator_id" string="Invigilator" />
+
+                <!-- Group By options -->
+                <group expand="0" string="Group By">
+                    <filter string="Exam" name="group_exam" context="{'group_by': 'exam_id'}" />
+                    <filter string="Hall" name="group_hall" context="{'group_by': 'hall_id'}" />
+                    <filter string="Invigilator" name="group_invigilator"
+                        context="{'group_by': 'invigilator_id'}" />
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}" />
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_exam_conducting" model="ir.actions.act_window">
+        <field name="name">Exam Conducting</field>
+        <field name="res_model">exam.conducting</field>
+        <field name="view_mode">list,form,kanban,calendar,search</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_exam_conducting"
+        name="Exam Conducting"
+        parent="menu_exam_management_root"
+        action="action_exam_conducting"
+        sequence="50"
+        groups="exam_management.group_college_admin" />
+
+</odoo>

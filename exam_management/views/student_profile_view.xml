@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="student_profile_template" name="Student Profile Page">
+        <t t-call="website.layout">
+            <div class="container mt-4">
+                <h2>Student Profile</h2>
+                <h2>Welcome, <t t-out="student.student_name"/></h2>
+                <p><strong>Enrollment ID:</strong> <t t-out="student.student_id"/></p>
+                <p><strong>Name:</strong> <t t-out="student.student_name"/></p>
+                <p><strong>Email:</strong> <t t-out="student.email"/></p>
+                <p><strong>Phone:</strong> <t t-out="student.phone"/></p>
+                <p><strong>Semester:</strong> <t t-out="student.class_semester"/></p>
+                <p><strong>Course:</strong> <t t-out="student.course"/></p>                
+            </div> 
+        </t>
+    </template>
+</odoo>

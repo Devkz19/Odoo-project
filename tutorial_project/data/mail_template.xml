@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="mail_template_staff_for_email" model="mail.template">
+        <field name="name">Staff Data: Report Email</field>
+        <field name="model_id" ref="tutorial_project.model_rest_staff"/>
+        <field name="subject">{{object.name}}: Staff Info</field>
+        <field name="email_to">{{object.email}}</field>
+        <field name="description">Staff data working in your company</field>
+        <field name="body_html" type="html">
+            <div>
+                <p>Hello dear,</p>
+                <p>This is your staff record from the company database.</p>
+                <p>Regards,<br/>Your Company</p>
+            </div>
+        </field>
+    </record>
+</odoo>

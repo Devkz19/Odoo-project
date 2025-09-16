@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_rest_staff,access_rest_staff,model_rest_staff,base.group_user,1,1,1,1
+access_rest_staff_lines_user,access.rest.staff.lines.user,model_rest_staff_lines,base.group_user,1,1,1,1
+
+access_rest_staff_wizard,rest.staff.wizard,model_rest_staff_wizard,base.group_user,1,1,1,1
+access_rest_staff_wizard_lines,rest.staff.wizard.lines,model_rest_staff_wizard_lines,base.group_user,1,1,1,1
+
+access_custom_excel_class,custom.excel.class.access,model_custom_excel_class,base.group_user,1,1,1,0
+access_custom_excel_wizard,custom.excel.wizard.access,model_custom_excel_wizard,base.group_user,1,1,1,0

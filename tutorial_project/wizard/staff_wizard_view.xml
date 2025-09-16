@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+        <record model="ir.ui.view" id="rest_staff_wizard_form_view_id">
+            <field name="name">rest.staff.wizard.form.view</field>
+            <field name="model">rest.staff.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Staff Form">
+                    <sheet>
+                        <field name="image" widget="image" style="width:150px;height:150px;" />
+                        <group>
+                            <field name="name" />
+                            <field name="age" />
+                            <field name="gender" />
+                            <field name="dob" />
+                            <field name="country_ids" widget="many2many_tags" />
+                            <field name="mobile" required="1" />
+                            <field name="email" />
+                            <field name="country_id" options="{'no_open': True, 'no_create': True}" />
+                            <field name="country_code" />
+                        </group>
+                        <notebook>
+                            <page string="Staff Line">
+                                <field name="staff_line_ids">
+                                    <list string="Staff Line" editable="top"
+                                          widget="section_and_note_one2many">
+                                        <control>
+                                            <create string="Add a Line" />
+                                            <create string="Add a section"
+                                                    context="{'default_display_type': 'line_section'}" />
+                                            <create string="Add a note"
+                                                    context="{'default_display_type': 'line_note'}" />
+                                        </control>
+                                        <field name="sequence" widget="handle" />
+                                        <field name="name" />
+                                        <field name="product_id" />
+                                    </list>
+                                    <form string="Staff Line">
+                                        <group>
+                                            <field name="name" />
+                                            <field name="product_id" />
+                                        </group>
+                                    </form>
+                                </field>
+                            </page>
+                        </notebook>
+
+                        <div class="oe_title">
+                            <div style="display: flex; gap: 40px; margin-top: 10px;">
+                                <!-- Label column -->
+                                <div class="col-4">
+                                    <div class="o_form_label">In Hand Salary:</div>
+                                    <div class="o_form_label">EPF + ESI:</div>
+                                    <div class="o_form_label">CTC Salary:</div>
+                                </div>
+                                <!-- Field column -->
+                                <div style="display: flex; flex-direction: column; gap: 8px;">
+                                    <field name="hand_salary" />
+                                    <field name="epf_esi" />
+                                    <field name="ctc_salary" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <footer>
+                            <button name="update_info_fun" string="Update Info" type="object" class="oe_highlight"/>
+                            <button name="create_new_staff" string="Create New Staff" type="object" class="oe_highlight"/>
+                            <button string="Cancel" class="btn-secondary" special="cancel"/>
+                        </footer>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="rest_staff_wizard_action_id" model="ir.actions.act_window">
+            <field name="name">All Team</field>
+            <field name="res_model">rest.staff.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="tutorial_project.rest_staff_wizard_form_view_id"/>
+        </record>
+
+</odoo>

@@ -11,21 +11,7 @@
                         Exam Management Dashboard
                     </h2>
                  
-                    <!-- <div class="d-flex justify-content-end mb-3 align-items-center">
-                        <span class="me-2 fw-bold">Filter by Course:</span>
-                        <select id="courseFilter" class="form-select w-auto me-2">
-                            <option value="">All Courses</option>
-                            <option value="IT">Information Technology</option>
-                            <option value="CS">Computer Science</option>
-                            <option value="EC">Electronics</option>
-                            <option value="ME">Mechanical</option>
-                            <option value="CE">Civil</option>
-                            <option value="EE">Electrical</option>
-                            <option value="BT">Biotechnology</option>
-                            <option value="CH">Chemical</option>
-                        </select>
-                    </div> -->
-
+                   
                     <!-- KPI Row -->
                     <div class="row">
                         <!-- Total Exams -->

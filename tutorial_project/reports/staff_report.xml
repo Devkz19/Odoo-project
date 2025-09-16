@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- QWeb Template -->
+        <template id="rest_staff_qweb_report_template">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-set="values" t-value="o.get_values_in_report()" />
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <div
+                                style=" position: absolute;
+                                            top: 50%;
+                                            left: 50%;
+                                            transform: translate(-50%, -50%) rotate(-45deg);
+                                            opacity: 0.05;
+                                            z-index: 0;
+                                            pointer-events: none;
+                                            text-align: center;
+                                        ">
+                                <img t-att-src="'/restaurent_project/static/description/icon.png'"
+                                    style="width:600px; height:auto;" />
+                            </div>
+                            <t t-set="count" t-value="1" />
+                            <t t-set="count2" t-value="1" />
+
+                            <h2>Staff Report</h2>
+                            <br />
+                            <ul>
+                                <li>Name : <span t-field="o.name" /></li>
+                                <li>Age : <span t-field="o.age" /></li>
+                                <li>Mobile : <span t-field="o.mobile" /></li>
+                                <li>Gender : <span t-field="o.gender" /></li>
+                                <li>Email : <span t-field="o.email" /></li>
+                                <li>DOB : <span t-field="o.dob" /></li>
+                                <li>Country Name : <span t-field="o.country_id.name" /></li>
+                            </ul>
+
+                            <p>
+                                <strong>Other Countries are mentioned below:</strong>
+                            </p>
+                            <table width="100%"
+                                style="border: 1px solid black; border-collapse: collapse; text-align: center;">
+                                <thead>
+                                    <tr style="border: 1px solid black; font-weight: bold;">
+                                        <th style="border: 1px solid black;">Sr No.</th>
+                                        <th style="border: 1px solid black;">Country Id</th>
+                                        <th style="border: 1px solid black;">Country Name</th>
+                                        <th style="border: 1px solid black;">Country Code</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="o.country_ids" t-as="c">
+                                        <tr>
+                                            <td style="border: 1px solid black;">
+                                                <span t-esc="count2" />
+                                            </td>
+                                            <td style="border: 1px solid black;">
+                                                <span t-esc="c.id" />
+                                            </td>
+                                            <td style="border: 1px solid black;">
+                                                <span t-field="c.name" />
+                                            </td>
+                                            <td style="border: 1px solid black;">
+                                                <span t-field="c.code" />
+                                            </td>
+                                        </tr>
+                                        <t t-set="count2" t-value="count2 + 1" />
+                                    </t>
+                                </tbody>
+                            </table>
+
+                            <br />
+                            <p>
+                                <strong>Staff Line Details:</strong>
+                            </p>
+                            <table width="100%"
+                                style="border: 1px solid black; border-collapse: collapse; text-align: center;">
+                                <thead>
+                                    <tr style="border: 1px solid black; font-weight: bold;">
+                                        <th style="border: 1px solid black;">Sr No.</th>
+                                        <th style="border: 1px solid black;">Staff Name</th>
+                                        <th style="border: 1px solid black;">Product Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="o.staff_line_ids" t-as="sl">
+                                        <tr>
+                                            <td style="border: 1px solid black;">
+                                                <span t-esc="count" />
+                                            </td>
+                                            <td style="border: 1px solid black;">
+                                                <span t-field="sl.name" />
+                                            </td>
+                                            <td style="border: 1px solid black;">
+                                                <span t-field="sl.product_id.name" />
+                                            </td>
+                                        </tr>
+                                        <t t-set="count" t-value="count + 1" />
+                                    </t>
+                                </tbody>
+                            </table>
+                            <br />
+                            <t t-esc="values['current_date'].strftime('%d-%m-%Y')" />
+                            <br />
+                            <t t-esc="values['current_datetime'].strftime('%d-%m-%Y %I:%M %p')" />
+                        </div>
+                       <div> User : <span t-field="o.login_user" /></div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+
+        <!-- Report Action -->
+        <record id="action_report_rest_staff" model="ir.actions.report">
+            <field name="name">Staff Report</field>
+            <field name="model">rest.staff</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">tutorial_project.rest_staff_qweb_report_template</field>
+            <field name="report_file">tutorial_project.rest_staff_qweb_report_template</field>
+            <field name="print_report_name">'Staff Report - %s' % (object.name)</field>
+            <field name="binding_model_id" ref="model_rest_staff" />
+            <field name="binding_type">report</field>
+            <!-- <field name="paperformat_id" ref="rest_staff_paper_id"/> -->
+        </record>
+    </data>
+</odoo> 

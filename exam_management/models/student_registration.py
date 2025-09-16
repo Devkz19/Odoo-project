@@ -1,6 +1,7 @@
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError, UserError
 import logging
+import base64
 
 _logger = logging.getLogger(__name__)
 
@@ -24,6 +25,7 @@ class StudentRegistration(models.Model):
     student_count = fields.Integer(string="Total Students", compute="_compute_student_count", store=False)
     student_count_confirmed = fields.Integer(string="Confirmed Students", compute="_compute_student_count")
     student_count_cancelled = fields.Integer(string="Cancelled Students", compute="_compute_student_count")
+    image_1920 = fields.Image("Profile Picture", max_width=1920, max_height=1920)
   
     
     course = fields.Selection([

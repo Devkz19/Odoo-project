@@ -61,6 +61,7 @@
             <list>
                 <field name="student_name" />
                 <field name="student_id" />
+                <!-- <field name="image_1920" widget="image" style="max-width: 100px; max-height: 100px;" class="oe_avatar" /> -->
                 <field name="email" />
                 <field name="phone" />
                 <field name="class_semester" />
@@ -101,6 +102,7 @@
                     <group>
                         <field name="student_name" />
                         <field name="student_id" readonly="1" />
+                        <field name="image_1920" widget="image" class="oe_avatar" style="max-width: 100px; max-height: 100px;" />
                         <field name="email" />
                         <field name="phone" />
                         <field name="user_id" />
@@ -128,6 +130,7 @@
             <kanban default_group_by="course">
                 <field name="student_name" />
                 <field name="student_id" />
+                <field name="image_1920" widget="image" class="oe_avatar" />
                 <field name="class_semester" />
                 <field name="course" />
                 <field name="state" />
@@ -137,6 +140,7 @@
                             <strong>
                                 <field name="student_name" />
                             </strong>
+                            <div><img t-att-src="kanban_image('student.registration', 'image_1920', record.id.raw_value)" class="oe_avatar o_kanban_avatar" style="max-width: 100px; max-height: 100px;"/></div>
                             <div>Enrollment ID: <field name="student_id" /></div>
                             <div>Class: <field name="class_semester" /></div>
                             <div>Course: <field name="course" /></div>

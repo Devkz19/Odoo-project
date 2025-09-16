@@ -15,8 +15,7 @@
                   action="action_exam_planning"
                   sequence="1"
                   groups="exam_management.group_college_admin"/>
-
-
+      
          <record id="contacts.menu_contacts" model="ir.ui.menu">
             <field name="name">Student Registration</field>
         </record>          

@@ -1,0 +1,27 @@
+{
+    'name': 'JOB PORTAL',
+    'version': '18.0.10.0',
+    'summary': 'Job Portal Management',
+    'sequence': -101,
+    'description': """Through this module you can manage job portal and job applications easily.""",
+    'category': 'Human Resources/Employees',
+    'website': 'https://www.odoo.com',
+    'depends': ['base', 'mail', 'web', 'portal', 'website'],
+    'data': [
+        'data/welcome_mail_template.xml',
+        'data/shortlisted_mail_template.xml',
+        'data/hired_mail_template.xml',
+        'data/rejected_mail_template.xml',   
+        'security/security.xml',
+        'security/ir.model.access.csv',
+        'views/job_position_view.xml',
+        'views/job_application_view.xml',
+        'views/job_portal_templates.xml',
+    ],
+    'demo': [],
+    'installable': True,
+    'application': True,
+    'auto_install': False,
+    'license': 'LGPL-3',
+    'images': ['static/description/icon.png']
+}

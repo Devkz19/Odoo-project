@@ -1,0 +1,7 @@
+<odoo>
+    <!-- Custom HR Manager group -->
+    <record id="group_job_hr_manager" model="res.groups">
+        <field name="name">Job HR Manager</field>
+      
+    </record>
+</odoo>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+        <!-- Application Rejected -->
+    <record id="mail_template_job_application_rejected" model="mail.template">
+        <field name="name">Job Application Rejection Email</field>
+        <field name="model_id" ref="job_portal.model_job_application"/>
+        <field name="subject">Your Application Status - Rejected</field>
+        <field name="email_to">{{ object.email }}</field>
+        <field name="email_from">{{ user.email or 'noreply@company.com' }}</field>
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; font-size: 14px; color: #333;">
+                <p>Dear <strong><t t-out="object.applicant_name or 'Candidate'"/></strong>,</p>
+                <p>
+                    Thank you for your interest in the position of 
+                    <strong><t t-out="object.job_id.name"/></strong>.
+                </p>
+                <p>
+                    After careful consideration, we regret to inform you that your application 
+                    has not been successful at this stage.
+                </p>
+                <p>
+                    We encourage you to apply again for future opportunities that match your profile.
+                </p>
+                <p>
+                    Best regards,<br/>
+                    <strong><t t-out="user.company_id.name or 'HR Team'"/></strong>
+                </p>
+            </div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+</odoo>

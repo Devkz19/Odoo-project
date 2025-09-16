@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- List View -->
+    <record id="view_job_position_list" model="ir.ui.view">
+        <field name="name">job.position.list</field>
+        <field name="model">job.position</field>
+        <field name="arch" type="xml">
+            <list string="Job Positions">
+                <field name="name"/>
+                <field name="department_id"/>
+                <field name="total_openings"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_job_position_form" model="ir.ui.view">
+        <field name="name">job.position.form</field>
+        <field name="model">job.position</field>
+        <field name="arch" type="xml">
+            <form string="Job Position">
+                <header>
+                    <button name="action_view_applications" type="object"
+            class="oe_stat_button" icon="fa-users"
+            string="Applications">
+        <field name="application_count" widget="statinfo"/>
+    </button>
+             
+                </header>
+
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="department_id"/>
+                        <field name="total_openings"/>
+                        <field name="active"/>
+                    </group>
+                    <notebook>
+                        <page string="Applications">
+                        <field name="application_ids">
+                            <list>
+                                <field name="applicant_name"/>
+                                <field name="email"/>
+                                <field name="status"/>
+                            </list>
+                        </field>
+                    </page>
+                        <page string="Description">
+                            <field name="description"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter>
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </chatter>
+            </form>
+        </field>
+    </record>
+
+    <!-- Kanban View -->
+    <record id="view_job_position_kanban" model="ir.ui.view">
+        <field name="name">job.position.kanban</field>
+        <field name="model">job.position</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_example">
+                <field name="name"/>
+                <field name="department_id"/>
+                <field name="total_openings"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="o_kanban_record_title">
+                                <strong>
+                                    <field name="name"/>
+                                </strong>
+                            </div>
+                            <div>
+                                <span>Department: </span>
+                                <field name="department_id"/>
+                            </div>
+                            <div>
+                                <span>Openings: </span>
+                                <field name="total_openings"/>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+        <!-- Action -->
+  
+    <record id="action_job_position" model="ir.actions.act_window">
+        <field name="name">Job Positions</field>
+        <field name="res_model">job.position</field>
+        <field name="view_mode">list,form,kanban</field>
+        <field name="target">current</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_job_root" name="Job Portal"
+      web_icon="job_portal,static/description/icon.png"/>
+    <menuitem id="menu_job_position" name="Job Positions"
+              parent="menu_job_root"
+              action="action_job_position"
+              sequence="1"/>
+
+</odoo>

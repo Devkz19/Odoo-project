@@ -31,7 +31,6 @@
                 <field name="exam_start_date"/>
                 <field name="exam_end_date"/>
                 <field name="course"/>
-                <field name="subject_ids"/>
                 <templates>
                     <t t-name="kanban-box">
                         <div class="oe_kanban_global_click">
@@ -39,7 +38,6 @@
                             <span><field name="course"/></span><br/>
                             <span>Start: <field name="exam_start_date"/></span><br/>
                             <span>End: <field name="exam_end_date"/></span><br/>
-                            <span>Subjects: <field name="subject_ids" widget="many2many_tags"/></span>
                         </div>
                     </t>
                 </templates>

@@ -6,11 +6,22 @@
         <field name="model">exam.dashboard</field>
         <field name="arch" type="xml">
             <form string="Exam Dashboard" create="false" edit="false" delete="false" js_class="exam_dashboard">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
                 <sheet>
-                    <h2 class="text-center fw-bold mb-4">
+                   <div id="exam-dashboard">
+                    
+                        <h2 class="text-center fw-bold mb-4">
                         Exam Management Dashboard
                     </h2>
-                 
+
+                    <!-- Print Button -->
+                        <div class="text-end mb-2">
+                            <div id="dashboard-print-btn" class="btn btn-primary" style="cursor: pointer; z-index: 1000; position: relative; display: inline-block; padding: 6px 12px; border: 1px solid transparent; border-radius: 4px; text-align: center; vertical-align: middle; user-select: none; background-color: #007bff; color: white; text-decoration: none;" onclick="window.printDashboardToPDF();">
+                                <i class="fa fa-print"></i> Print Dashboard
+                            </div>
+                        </div>
+
+                                    
                    
                     <!-- KPI Row -->
                     <div class="row">
@@ -97,6 +108,8 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+
                     </div>
                  
                 </sheet>

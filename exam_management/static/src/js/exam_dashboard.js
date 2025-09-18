@@ -8,138 +8,192 @@ import { onMounted } from "@odoo/owl";
 // Debug: Log that the module is loading
 console.log("Exam Dashboard JavaScript module is loading...");
 
-// Debug: Add a global click handler to test if any clicks are working
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("DOM loaded, setting up global click handler");
-    
-    // Add a global click handler for debugging
-    document.addEventListener('click', function(event) {
-        if (event.target.id === 'dashboard-print-btn' || event.target.closest('#dashboard-print-btn')) {
-            console.log("GLOBAL: Print button clicked!", event);
-            // Call the PDF generation function
-            window.printDashboardToPDF();
-        }
-    });
-});
-
-// Global function for PDF generation that can be called from inline onclick
-window.printDashboardToPDF = function() {
+// Dedicated function used by controller only (no inline/global triggers)
+async function printDashboardToPDF() {
     console.log("printDashboardToPDF function called");
     
-    // Check if html2pdf is available
-    if (typeof html2pdf === 'undefined') {
-        alert("PDF generation library not loaded. Please refresh the page.");
-        console.error("html2pdf library not found");
-        return;
-    }
-    
-    // Get the dashboard content
     const dashboardContent = document.querySelector("#exam-dashboard");
     if (!dashboardContent) {
-        alert("Dashboard content not found");
         console.error("Dashboard content not found");
         return;
     }
     
-    console.log("Starting PDF generation...");
-    
+    const printButton = document.querySelector("#dashboard-print-btn");
+    if (printButton) {
+        printButton.style.pointerEvents = "none";
+        printButton.classList.add("disabled");
+    }
+
+    let printWindow = null;
+
     try {
-        // Show loading state
-        const printButton = document.querySelector("#dashboard-print-btn");
-        if (printButton) {
-            printButton.style.pointerEvents = "none";
-            printButton.style.opacity = "0.6";
-            const originalText = printButton.innerHTML;
-            printButton.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Generating PDF...';
+        printWindow = window.open('', 'PRINT', 'height=900,width=1200,scrollbars=yes,resizable=yes');
+        if (!printWindow) {
+            console.warn('Popup blocked. Allow popups to print.');
+            return;
         }
-        
-        // Create a clone of the dashboard content for printing
-        const printContent = dashboardContent.cloneNode(true);
-        
-        // Remove the print button from the cloned content
-        const clonedPrintBtn = printContent.querySelector("#dashboard-print-btn");
-        if (clonedPrintBtn) {
-            clonedPrintBtn.remove();
-        }
-        
-        // Add some styling for better PDF output
-        const printElement = document.createElement('div');
-        printElement.style.cssText = `
-            font-family: Arial, sans-serif;
-            color: #333;
-            background: white;
-            padding: 20px;
-            max-width: 100%;
-        `;
-        
-        // Add a title for the PDF
-        const titleElement = document.createElement('h1');
-        titleElement.textContent = 'Exam Management Dashboard Report';
-        titleElement.style.cssText = 'text-align: center; margin-bottom: 30px; color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;';
-        printElement.appendChild(titleElement);
-        
-        // Add current date
-        const dateElement = document.createElement('p');
-        dateElement.textContent = `Generated on: ${new Date().toLocaleString()}`;
-        dateElement.style.cssText = 'text-align: center; margin-bottom: 20px; color: #666; font-style: italic;';
-        printElement.appendChild(dateElement);
-        
-        printElement.appendChild(printContent);
-        
-        // Configure html2pdf options
-        const opt = {
-            margin: [0.5, 0.5, 0.5, 0.5],
-            filename: `exam_dashboard_${new Date().toISOString().split('T')[0]}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { 
-                scale: 2,
-                useCORS: true,
-                letterRendering: true,
-                allowTaint: true
-            },
-            jsPDF: { 
-                unit: 'in', 
-                format: 'a4', 
-                orientation: 'portrait' 
-            }
-        };
-        
-        // Generate and download the PDF
-        html2pdf().set(opt).from(printElement).save().then(() => {
-            console.log("PDF generated successfully!");
-            alert("Dashboard PDF generated successfully!");
-            
-            // Restore button state
-            if (printButton) {
-                printButton.style.pointerEvents = "auto";
-                printButton.style.opacity = "1";
-                printButton.innerHTML = '<i class="fa fa-print"></i> Print Dashboard';
-            }
-        }).catch((error) => {
-            console.error("Error generating PDF:", error);
-            alert(`Error generating PDF: ${error.message || "Unknown error"}`);
-            
-            // Restore button state
-            if (printButton) {
-                printButton.style.pointerEvents = "auto";
-                printButton.style.opacity = "1";
-                printButton.innerHTML = '<i class="fa fa-print"></i> Print Dashboard';
+
+        // Wait for popup to initialize
+        await new Promise(resolve => {
+            if (printWindow.document && printWindow.document.readyState === 'complete') {
+                resolve();
+            } else {
+                printWindow.addEventListener('load', resolve);
+                setTimeout(resolve, 500);
             }
         });
-        
+
+        // Copy only stylesheets & <style> tags, not full head
+        const headLinks = Array.from(document.head.querySelectorAll("link[rel='stylesheet'], style"))
+            .map(node => node.outerHTML)
+            .join("\n");
+
+        const docElClass = document.documentElement.className;
+        const bodyClass = document.body.className;
+        const baseTag = `<base href="${location.origin + location.pathname}" />`;
+        const printStyles = `
+            <style>
+                @page { size: A4 portrait; margin: 12mm; }
+                html, body { 
+                    -webkit-print-color-adjust: exact; 
+                    print-color-adjust: exact;
+                    margin: 0;
+                    padding: 20px;
+                }
+                .o_form_view, .o_content { background: white !important; }
+                body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+            </style>
+        `;
+
+        // Write a clean skeleton document
+        printWindow.document.open();
+        printWindow.document.write(`<!DOCTYPE html>
+            <html class="${docElClass}">
+            <head>
+                ${baseTag}
+                ${headLinks}
+                ${printStyles}
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
+            </head>
+            <body class="${bodyClass}">
+            </body>
+            </html>`);
+        printWindow.document.close();
+
+        await new Promise(resolve => setTimeout(resolve, 200));
+
+        if (!printWindow.document.body) {
+            console.error("Print window document body is null");
+            throw new Error("Failed to initialize print window document");
+        }
+
+        const container = printWindow.document.body;
+
+        // Clone dashboard content
+        const cloned = dashboardContent.cloneNode(true);
+
+        // Remove the print button inside clone if any
+        const btnInClone = cloned.querySelector('#dashboard-print-btn');
+        if (btnInClone) btnInClone.remove();
+
+        // Hide any interactive elements
+        const interactiveElements = cloned.querySelectorAll('button, input[type="button"], .btn');
+        interactiveElements.forEach(el => {
+            el.style.display = 'none';
+        });
+
+        container.appendChild(cloned);
+
+        // Match current layout width
+        container.style.maxWidth = dashboardContent.offsetWidth + 'px';
+        container.style.margin = '0 auto';
+
+        // Wait for fonts, images, styles
+        const whenFontsReady = printWindow.document.fonts ?
+            printWindow.document.fonts.ready.catch(() => {
+                console.warn("Fonts loading failed, continuing anyway");
+                return Promise.resolve();
+            }) : Promise.resolve();
+
+        const whenImagesReady = new Promise((resolve) => {
+            const imgs = Array.from(container.querySelectorAll('img'));
+            let remaining = imgs.length;
+            if (!remaining) return resolve();
+
+            const timeout = setTimeout(() => {
+                console.warn("Image loading timeout, continuing anyway");
+                resolve();
+            }, 3000);
+
+            imgs.forEach((img) => {
+                if (img.complete) {
+                    if (--remaining === 0) {
+                        clearTimeout(timeout);
+                        resolve();
+                    }
+                } else {
+                    img.addEventListener('load', () => { 
+                        if (--remaining === 0) {
+                            clearTimeout(timeout);
+                            resolve();
+                        }
+                    });
+                    img.addEventListener('error', () => { 
+                        console.warn("Image failed to load:", img.src);
+                        if (--remaining === 0) {
+                            clearTimeout(timeout);
+                            resolve();
+                        }
+                    });
+                }
+            });
+        });
+
+        const whenStylesReady = new Promise((resolve) => setTimeout(resolve, 500));
+
+        await Promise.all([whenFontsReady, whenImagesReady, whenStylesReady]);
+
+        if (printWindow.closed) {
+            console.warn("Print window was closed before printing");
+            return;
+        }
+
+        printWindow.focus();
+        console.log(">>> About to call printWindow.print()");
+        printWindow.print();
+
+        setTimeout(() => { 
+            try { 
+                if (printWindow && !printWindow.closed) {
+                    printWindow.close(); 
+                }
+            } catch (e) {
+                console.warn("Error closing print window:", e);
+            }
+        }, 1000);
+
     } catch (error) {
-        console.error("Error in PDF generation:", error);
-        alert(`Error generating PDF: ${error.message || "Unknown error"}`);
-        
-        // Restore button state
-        const printButton = document.querySelector("#dashboard-print-btn");
+        console.error("Error in printDashboardToPDF:", error);
+
+        if (printWindow && !printWindow.closed) {
+            try { printWindow.close(); } catch (e) {}
+        }
+
+        try { window.print(); } catch (fallbackError) {
+            console.error("Fallback print also failed:", fallbackError);
+        }
+    } finally {
         if (printButton) {
             printButton.style.pointerEvents = "auto";
-            printButton.style.opacity = "1";
-            printButton.innerHTML = '<i class="fa fa-print"></i> Print Dashboard';
+            printButton.classList.remove("disabled");
         }
     }
-};
+}
+
+// Expose for inline handler (UI-only trigger). Guard to avoid overwriting if already present.
+if (typeof window !== 'undefined' && !window.printDashboardToPDF) {
+    window.printDashboardToPDF = printDashboardToPDF;
+}
 
 export class ExamDashboardController extends FormController {
     setup() {
@@ -151,8 +205,8 @@ export class ExamDashboardController extends FormController {
         onMounted(() => {
             if (this.el) {
                 console.log("Dashboard mounted, setting up event listeners");
-                
-                // Handle clicks
+
+                // Handle clicks (but exclude print button to avoid double triggers)
                 this.el.addEventListener("click", this.handleDashboardClick.bind(this));
 
                 // Attach search inputs
@@ -160,112 +214,53 @@ export class ExamDashboardController extends FormController {
                 searchInputs.forEach(input => {
                     input.addEventListener("input", this.handleSearchInput.bind(this));
                 });
-
-                // Attach print button functionality with retry mechanism
-                this.attachPrintButtonListener();
-                
-                // Also try a direct approach after a delay
-                setTimeout(() => {
-                    this.attachPrintButtonListener();
-                }, 500);
             }
         });
     }        
 
-    attachPrintButtonListener() {
-        // Try to find the print button with retry mechanism
-        const findAndAttachPrintButton = (retries = 0) => {
-            const printButton = this.el.querySelector("#dashboard-print-btn");
-            console.log(`Attempt ${retries + 1}: Looking for print button`, printButton);
-            
-            if (printButton) {
-                console.log("Print button found, attaching listener");
-                console.log("Button properties:", {
-                    disabled: printButton.disabled,
-                    style: printButton.style.cssText,
-                    className: printButton.className,
-                    offsetParent: printButton.offsetParent
-                });
-                
-                // Add a simple test click handler first
-                printButton.addEventListener("click", (e) => {
-                    console.log("Print button clicked!", e);
-                    this.notification.add("Print button clicked! Starting PDF generation...", { type: "info" });
-                });
-                
-                // Add the main print handler
-                printButton.addEventListener("click", this.handlePrintDashboard.bind(this));
-                
-                // Test if button is clickable
-                printButton.style.pointerEvents = "auto";
-                printButton.style.cursor = "pointer";
-            } else if (retries < 10) {
-                // Retry after a short delay if button not found
-                setTimeout(() => findAndAttachPrintButton(retries + 1), 100);
-            } else {
-                console.warn("Print button not found after retries");
-                // Try to find all buttons for debugging
-                const allButtons = this.el.querySelectorAll("button");
-                console.log("All buttons found:", allButtons);
-            }
-        };
-        findAndAttachPrintButton();
-    }
-
     handleDashboardClick(event) {
-        // Handle print button clicks
-        const printButton = event.target.closest("#dashboard-print-btn");
-        if (printButton) {
-            event.preventDefault();
-            event.stopPropagation();
-            this.handlePrintDashboard(event);
+        // Skip print button clicks (handled by inline onclick)
+        if (event.target.closest("#dashboard-print-btn")) {
             return;
         }
 
-        // Handle exam detail buttons
+        // Exam detail buttons
         const examButton = event.target.closest(".exam-detail-btn");
         if (examButton) {
             event.preventDefault();
             event.stopPropagation();
-
             const examId = examButton.dataset.examId;
             if (examId && !isNaN(examId)) {
                 this.setLinkLoading(examButton, true);
                 this.openRecord("exam.planning", parseInt(examId), "Exam Details")
-                    .finally(() => {
-                        this.setLinkLoading(examButton, false);
-                    });
+                    .finally(() => this.setLinkLoading(examButton, false));
             } else {
                 this.notification.add("Invalid exam ID", { type: "warning" });
             }
             return;
         }
 
-        // Handle student profile buttons
+        // Student profile buttons
         const studentButton = event.target.closest(".view-profile-btn");
         if (studentButton) {
             event.preventDefault();
             event.stopPropagation();
-
             const studentId = studentButton.dataset.studentId;
             if (studentId && !isNaN(studentId)) {
                 this.setLinkLoading(studentButton, true);
                 this.openRecord("student.registration", parseInt(studentId), "Student Profile")
-                    .finally(() => {
-                        this.setLinkLoading(studentButton, false);
-                    });
+                    .finally(() => this.setLinkLoading(studentButton, false));
             } else {
                 this.notification.add("Invalid student ID", { type: "warning" });
             }
             return;
         }
 
-        // Handle KPI card clicks
+        // KPI cards
         const kpiCard = event.target.closest(".kpi-card[data-action]");
         if (kpiCard) {
             event.preventDefault();
-            const action = kpiCard.dataset.action;
-            this.handleKpiCardClick(action);
+            this.handleKpiCardClick(kpiCard.dataset.action);
             return;
         }
     }
@@ -284,10 +279,7 @@ export class ExamDashboardController extends FormController {
             });
         } catch (error) {
             console.error("Error opening record:", error);
-            this.notification.add(
-                `Error opening ${title}: ${error.message || "Unknown error"}`,
-                { type: "danger" }
-            );
+            this.notification.add(`Error opening ${title}: ${error.message || "Unknown error"}`, { type: "danger" });
         }
     }
 
@@ -298,7 +290,6 @@ export class ExamDashboardController extends FormController {
             halls: { model: "exam.hall", name: "Exam Halls" },
             seatings: { model: "exam.seating", name: "Exam Seating" },
         };
-
         const config = actionMap[action];
         if (config) {
             try {
@@ -307,10 +298,7 @@ export class ExamDashboardController extends FormController {
                     name: config.name,
                     res_model: config.model,
                     view_mode: "list,form",
-                    views: [
-                        [false, "list"],
-                        [false, "form"],
-                    ],
+                    views: [[false, "list"], [false, "form"]],
                     target: "current",
                 });
             } catch (error) {
@@ -322,7 +310,6 @@ export class ExamDashboardController extends FormController {
 
     setLinkLoading(link, loading) {
         if (!link) return;
-
         if (loading) {
             link.style.pointerEvents = "none";
             link.dataset.originalText = link.innerHTML;
@@ -339,111 +326,11 @@ export class ExamDashboardController extends FormController {
     }
 
     handleSearchInput(event) {
-        // Handle search input functionality if needed
-        // This method is referenced but not implemented
         // Add search functionality here if required
-    }
-
-    async handlePrintDashboard(event) {
-        console.log("Print dashboard function called", event);
-        event.preventDefault();
-        event.stopPropagation();
-
-        const printButton = event.target.closest("#dashboard-print-btn");
-        if (!printButton) {
-            console.warn("Print button not found in event target");
-            return;
-        }
-
-        console.log("Print button found, starting PDF generation");
-
-        try {
-            // Show loading state
-            this.setLinkLoading(printButton, true);
-
-            // Get the dashboard content
-            const dashboardContent = this.el.querySelector("#exam-dashboard");
-            if (!dashboardContent) {
-                this.notification.add("Dashboard content not found", { type: "warning" });
-                return;
-            }
-
-            // Check if html2pdf is available
-            if (typeof html2pdf === 'undefined') {
-                this.notification.add("PDF generation library not loaded. Please refresh the page.", { type: "error" });
-                return;
-            }
-
-            // Create a clone of the dashboard content for printing
-            const printContent = dashboardContent.cloneNode(true);
-            
-            // Remove the print button from the cloned content
-            const clonedPrintBtn = printContent.querySelector("#dashboard-print-btn");
-            if (clonedPrintBtn) {
-                clonedPrintBtn.remove();
-            }
-
-            // Add some styling for better PDF output
-            const printElement = document.createElement('div');
-            printElement.style.cssText = `
-                font-family: Arial, sans-serif;
-                color: #333;
-                background: white;
-                padding: 20px;
-                max-width: 100%;
-            `;
-            
-            // Add a title for the PDF
-            const titleElement = document.createElement('h1');
-            titleElement.textContent = 'Exam Management Dashboard Report';
-            titleElement.style.cssText = 'text-align: center; margin-bottom: 30px; color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;';
-            printElement.appendChild(titleElement);
-            
-            // Add current date
-            const dateElement = document.createElement('p');
-            dateElement.textContent = `Generated on: ${new Date().toLocaleString()}`;
-            dateElement.style.cssText = 'text-align: center; margin-bottom: 20px; color: #666; font-style: italic;';
-            printElement.appendChild(dateElement);
-            
-            printElement.appendChild(printContent);
-
-            // Configure html2pdf options
-            const opt = {
-                margin: [0.5, 0.5, 0.5, 0.5],
-                filename: `exam_dashboard_${new Date().toISOString().split('T')[0]}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { 
-                    scale: 2,
-                    useCORS: true,
-                    letterRendering: true,
-                    allowTaint: true
-                },
-                jsPDF: { 
-                    unit: 'in', 
-                    format: 'a4', 
-                    orientation: 'portrait' 
-                }
-            };
-
-            // Generate and download the PDF
-            await html2pdf().set(opt).from(printElement).save();
-            
-            this.notification.add("Dashboard PDF generated successfully!", { type: "success" });
-
-        } catch (error) {
-            console.error("Error generating PDF:", error);
-            this.notification.add(
-                `Error generating PDF: ${error.message || "Unknown error"}`,
-                { type: "danger" }
-            );
-        } finally {
-            // Remove loading state
-            this.setLinkLoading(printButton, false);
-        }
     }
 }
 
-// Register the controller for your dashboard view
+// Register the controller
 console.log("Registering exam_dashboard controller...");
 registry.category("views").add("exam_dashboard", {
     ...registry.category("views").get("form"),

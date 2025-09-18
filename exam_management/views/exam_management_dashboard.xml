@@ -5,7 +5,7 @@
         <field name="name">exam.dashboard.form</field>
         <field name="model">exam.dashboard</field>
         <field name="arch" type="xml">
-            <form string="Exam Dashboard" create="false" edit="false" delete="false" js_class="exam_dashboard">
+            <form string="Exam Dashboard" create="false" edit="true" delete="false" js_class="exam_dashboard">
                 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
                 <sheet>
                    <div id="exam-dashboard">
@@ -16,13 +16,22 @@
 
                     <!-- Print Button -->
                         <div class="text-end mb-2">
-                            <div id="dashboard-print-btn" class="btn btn-primary" style="cursor: pointer; z-index: 1000; position: relative; display: inline-block; padding: 6px 12px; border: 1px solid transparent; border-radius: 4px; text-align: center; vertical-align: middle; user-select: none; background-color: #007bff; color: white; text-decoration: none;" onclick="window.printDashboardToPDF();">
+                            <div id="dashboard-print-btn" role="button" tabindex="0" class="btn btn-primary" style="cursor: pointer; z-index: 1000; position: relative; display: inline-block; padding: 6px 12px; border: 1px solid transparent; border-radius: 4px; text-align: center; vertical-align: middle; user-select: none; background-color: #007bff; color: white; text-decoration: none;" onclick="event.stopPropagation(); if (window.printDashboardToPDF) { window.printDashboardToPDF(); } return false;">
                                 <i class="fa fa-print"></i> Print Dashboard
                             </div>
                         </div>
 
-                                    
-                   
+                   <!-- Filters Row -->
+                    <div class="row mb-4 align-items-end">
+                         <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="form-label fw-semibold" for="course_filter">Course</label>
+                                 <field name="course_filter" widget="selection" class="form-select" placeholder="All Courses"/>
+                            </div>
+                        </div>
+                    </div>
+
+
                     <!-- KPI Row -->
                     <div class="row">
                         <!-- Total Exams -->

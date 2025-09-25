@@ -1,4 +1,7 @@
 from odoo import models, fields, api
+import io
+import base64
+import xlsxwriter
 
 class JobApplication(models.Model):
     _name = 'job.application'
@@ -20,7 +23,7 @@ class JobApplication(models.Model):
     ('rejected', 'Rejected'),
     ('hired', 'Hired'),
     ('canceled', 'Canceled'),
-], string="Status", default='draft', tracking=True, clickable=True)
+], string="Status", default='draft', tracking=True)
 
     def action_cancel(self):
         self.write({'status': 'canceled'})
@@ -77,5 +80,73 @@ class JobApplication(models.Model):
                 elif record.status == "rejected":
                     record._send_status_email("job_portal.mail_template_job_application_rejected")
 
-        return res            
+        return res   
+    
+    def action_export_excel(self):
+        """Export the current job application record to Excel (row-wise table)"""
+        self.ensure_one()
+        output = io.BytesIO()
+        workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+        sheet = workbook.add_worksheet('Job Application')
+
+        # Define formats
+        header_format = workbook.add_format({
+            'bold': True,
+            'bg_color': '#D3D3D3',
+            'border': 1,
+            'align': 'center',
+            'valign': 'vcenter'
+        })
+        text_format = workbook.add_format({'border': 1})
+
+        # Data mapping (field order matters here)
+        headers = [
+            'Applicant Name', 'Email', 'Phone',
+            'Applied Job', 'CV Filename', 'Status', 'Active'
+        ]
+        values = [
+            self.applicant_name or '',
+            self.email or '',
+            self.phone or '',
+            self.job_id.name or '',
+            self.cv_filename or '',
+            self.status or '',
+            'Yes' if self.active else 'No'
+        ]
+
+        # Write headers in row 0
+        for col, header in enumerate(headers):
+            sheet.write(0, col, header, header_format)
+
+        # Write values in row 1
+        for col, value in enumerate(values):
+            sheet.write(1, col, value, text_format)
+
+        # Auto adjust column widths based on header length
+        for col, header in enumerate(headers):
+            column_width = max(len(str(header)), len(str(values[col]))) + 5
+            sheet.set_column(col, col, column_width)
+
+        workbook.close()
+        output.seek(0)
+        excel_data = output.read()
+        output.close()
+
+        # Create attachment
+        attachment = self.env['ir.attachment'].create({
+            'name': f'{self.applicant_name}_application.xlsx',
+            'type': 'binary',
+            'datas': base64.b64encode(excel_data),
+            'res_model': 'job.application',
+            'res_id': self.id,
+            'mimetype': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        })
+
+        # Return as downloadable file
+        return {
+            'type': 'ir.actions.act_url',
+            'url': f'/web/content/{attachment.id}?download=true',
+            'target': 'new',
+        }
+       
    

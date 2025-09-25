@@ -44,6 +44,10 @@
                     <field name="status" widget="statusbar" clickable="1" 
                            options="{'clickable': True}"
                         statusbar_visible="draft,submitted,shortlisted,rejected,hired,canceled"/>
+                    <button name="action_export_excel"
+                            type="object"
+                            string="Export Excel"
+                            class="btn-primary"/>    
                 </header>
 
 

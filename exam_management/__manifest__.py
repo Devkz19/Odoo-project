@@ -11,7 +11,7 @@
     """,
     'category': 'Education',
     'website': 'https://www.odoo.com',
-    'depends': ['base', 'mail', 'web', 'portal', 'website'],
+    'depends': ['base', 'mail', 'web', 'portal', 'website','purchase'],
     'data': [
         'security/exam_security.xml',
         'security/ir.model.access.csv',
@@ -23,7 +23,6 @@
         'views/student_portal_dashboard.xml',
         'wizard/exam_seating_wizard.xml',
         'views/student_registration_templates.xml',
-   
         'views/exam_planning_views.xml',
         'views/student_registration_views.xml',
         'views/menu_view.xml',
@@ -37,6 +36,7 @@
         # 'views/student_profile_view.xml',
         # 'data/exam_data.xml',
         'data/student_sequence.xml',
+        'data/exam_planning_demo.xml',
         'data/invigilator_mail_template.xml',
         'data/registration_mail_template.xml',
     ],

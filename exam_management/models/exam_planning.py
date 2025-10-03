@@ -40,7 +40,7 @@ class ExamPlanning(models.Model):
     duration = fields.Float('Duration (Hours)', required=True, tracking=True)
     total_marks = fields.Integer('Total Marks', required=True, tracking=True)
 
-    # Replaced single subject with One2many
+    # subject with One2many
     subject_ids = fields.One2many(
         'exam.subject',
         'exam_id',

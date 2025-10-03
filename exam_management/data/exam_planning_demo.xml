@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="exam_planning_demo_1" model="exam.planning">
+        <field name="exam_name">Sem 4 Mid Term Examination</field>
+        <field name="exam_code">MT2025</field>
+        <field name="class_semester">ly_sem7</field>
+        <field name="course">EE</field>
+        <field name="exam_start_date">2025-10-13</field>
+        <field name="exam_end_date">2025-10-16</field>
+        <field name="exam_time">10.0</field> 
+        <field name="duration">3.0</field>
+        <field name="total_marks">100</field>
+        <field name="registration_deadline">2025-10-05</field>
+        <field name="instructions">Bring your hall ticket and college ID card.</field>
+        <field name="active">True</field>
+        <field name="state">new</field>
+    </record>
+
+    <record id="exam_subject_pe" model="exam.subject">
+        <field name="name">power electronics</field>
+        <field name="total_marks">100</field>
+        <field name="exam_date">2025-10-13</field>
+        <field name="exam_id" ref="exam_planning_demo_1"/>
+    </record>
+
+    <record id="exam_subject_p/s" model="exam.subject">
+        <field name="name">protection/switchgear</field>
+        <field name="total_marks">100</field>
+        <field name="exam_date">2025-10-14</field>
+        <field name="exam_id" ref="exam_planning_demo_1"/>
+    </record>
+
+    <record id="exam_subject_ps" model="exam.subject">
+        <field name="name">power systems</field>
+        <field name="total_marks">100</field>
+        <field name="exam_date">2025-10-15</field>
+        <field name="exam_id" ref="exam_planning_demo_1"/>
+    </record>
+
+    <record id="exam_subject_md" model="exam.subject">
+        <field name="name">machine design</field>
+        <field name="total_marks">100</field>
+        <field name="exam_date">2025-10-16</field>
+        <field name="exam_id" ref="exam_planning_demo_1"/>
+    </record>
+
+</odoo>

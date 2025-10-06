@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Scheduled Action: Auto-cancel draft job applications older than 15 days -->
+    <record id="ir_cron_auto_cancel_old_drafts" model="ir.cron">
+        <field name="name">Job Application: Auto Cancel Old Drafts</field>
+        <field name="model_id" ref="job_portal.model_job_application"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_auto_cancel_old_drafts()</field>
+        <field name="interval_number">15</field>
+        <field name="interval_type">days</field>
+        <field name="priority">10</field>
+        <field name="active">True</field>
+    </record>
+</odoo>

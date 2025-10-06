@@ -11,6 +11,7 @@
         'data/welcome_mail_template.xml',
         'data/shortlisted_mail_template.xml',
         'data/hired_mail_template.xml',
+        'data/ir_cron.xml',
         'data/rejected_mail_template.xml',   
         'security/security.xml',
         'security/ir.model.access.csv',

@@ -1,5 +1,7 @@
 from odoo import models, fields, api
+from datetime import datetime, timedelta
 import io
+import json
 import base64
 import xlsxwriter
 
@@ -43,6 +45,31 @@ class JobApplication(models.Model):
     def action_reset_draft(self):
         self.write({'status': 'draft'})
     
+    @api.model
+    def _cron_auto_cancel_old_drafts(self):
+        """Automatically cancel draft job applications older than 15 days."""
+        limit_date = fields.Datetime.to_string(datetime.now() - timedelta(days=15))
+        old_drafts = self.search([
+            ('status', '=', 'draft'),
+            ('create_date', '<', limit_date)
+        ])
+
+        for record in old_drafts:
+            record.write({'status': 'canceled'})
+
+        if old_drafts:
+            _logger = self.env['ir.logging']
+            _logger.create({
+                'name': 'Auto Cancel Drafts',
+                'type': 'server',
+                'dbname': self._cr.dbname,
+                'level': 'INFO',
+                'message': f"Auto-canceled {len(old_drafts)} old draft job applications.",
+                'path': 'job.application',
+                'func': '_cron_auto_cancel_old_drafts',
+                'line': '0',
+            })
+            
         #email functions 
     def action_send_thankyou_email(self):
         """Send thank you email to candidate"""
@@ -148,5 +175,40 @@ class JobApplication(models.Model):
             'url': f'/web/content/{attachment.id}?download=true',
             'target': 'new',
         }
+    def action_export_json(self):
+        """Export the current job application record to JSON"""
+        self.ensure_one()
+
+        # Prepare data as a dict
+        data = {
+            'applicant_name': self.applicant_name or '',
+            'email': self.email or '',
+            'phone': self.phone or '',
+            'applied_job': self.job_id.name or '',
+            'cv_filename': self.cv_filename or '',
+            'status': self.status or '',
+            'active': True if self.active else False,
+        }
+
+        # Convert to JSON string (pretty-printed)
+        json_data = json.dumps(data, indent=4)
+
+        # Encode JSON as binary for attachment
+        json_bytes = json_data.encode("utf-8")
+        attachment = self.env['ir.attachment'].create({
+            'name': f'{self.applicant_name}_application.json',
+            'type': 'binary',
+            'datas': base64.b64encode(json_bytes),
+            'res_model': 'job.application',
+            'res_id': self.id,
+            'mimetype': 'application/json'
+        })
+
+        # Return as downloadable file
+        return {
+            'type': 'ir.actions.act_url',
+            'url': f'/web/content/{attachment.id}?download=true',
+            'target': 'new',
+        }    
        
    

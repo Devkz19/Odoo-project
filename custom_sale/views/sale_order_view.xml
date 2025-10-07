@@ -1,0 +1,62 @@
+<odoo>
+    <!-- Inherit Sale Order Form View -->
+    <record id="view_order_form_inherit_custom" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.custom</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Locate Payment Terms field -->
+            <xpath expr="//field[@name='payment_term_id']" position="after">
+                <field name="payment_method"/>
+                <field name="payment_info"/>
+            </xpath>
+
+            <!-- Add Export to Excel button in header -->
+            <xpath expr="//header" position="inside">
+                <button name="action_export_excel"
+                        type="object"
+                        string="Export to Excel"
+                        class="btn-primary"
+                        icon="fa-download"/>
+            </xpath>
+
+        </field>    
+    </record>
+
+<!-- Inherit Sale Order Search View -->
+<record id="view_order_search_inherit_custom" model="ir.ui.view">
+    <field name="name">sale.order.search.inherit.custom</field>
+    <field name="model">sale.order</field>
+    <field name="inherit_id" ref="sale.sale_order_view_search_inherit_quotation"/>
+    <field name="arch" type="xml">
+
+        <!-- Add filters after "Sales Orders" filter -->
+        <xpath expr="//filter[@name='sales']" position="after">
+            <separator/>
+        </xpath>
+
+        <!-- Add dynamic search fields -->
+        <xpath expr="//search" position="inside">
+            <field name="payment_method" string="Payment Method"/>
+            <field name="payment_info" string="Payment Info"/>
+
+            <group expand="0" string="Group By" name="group_by">
+                <filter string="Payment Method" name="group_payment_method" context="{'group_by':'payment_method'}"/>
+                <filter string="Payment Info" name="group_payment_info" context="{'group_by':'payment_info'}"/>
+            </group>
+        </xpath>
+
+    </field>
+</record>
+
+    <record id="model_sale_order_action_done" model="ir.actions.server">
+        <field name="name">Action Done</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="binding_view_types">form,list</field>
+        <field name="state">code</field>
+        <field name="code">records.action_done_custom()</field>
+    </record>
+        
+</odoo>

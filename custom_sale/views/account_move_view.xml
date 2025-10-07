@@ -1,0 +1,50 @@
+<odoo>
+    <record id="view_move_form_inherit_payment" model="ir.ui.view">
+        <field name="name">account.move.form.inherit.payment</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Insert AFTER the due_date block -->
+          <xpath expr="//field[@name='invoice_date_due']/ancestor::div[@name='due_date']" position="after">
+                <field name="payment_method"/>
+                <field name="payment_info"/>
+            </xpath>
+
+            <!-- Add penalty calculation in the totals section after tax_totals -->
+            <xpath expr="//field[@name='tax_totals']" position="after">
+                <field name="penalty_amount" string="Late Payment Penalty" 
+                       class="oe_subtotal_footer_separator" 
+                       readonly="1"/>
+                       
+            </xpath>
+             <!-- Show payment status information for debugging -->
+            <xpath expr="//field[@name='payment_reference']" position="after">
+                <field name="payment_state" readonly="1" invisible="0" 
+                       help="Current payment status"/>
+                              
+            </xpath>
+            
+
+             <!-- Modify the amount_residual to include penalty -->
+            <xpath expr="//field[@name='amount_residual']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            
+            <xpath expr="//field[@name='amount_residual']" position="after">
+                <field name="amount_residual_with_penalty" 
+                       string="Amount Due" 
+                       class="oe_subtotal_footer_separator"
+                       invisible="state == 'draft'"/>
+                <div invisible="state == 'draft' or not penalty_amount or penalty_amount == 0">
+                    <button name="recalculate_penalty" 
+                            string="Recalculate Penalty" 
+                            type="object" 
+                            class="btn-link"
+                            icon="fa-refresh"/>
+                </div>
+            </xpath>
+          
+        </field>
+    </record>
+</odoo>

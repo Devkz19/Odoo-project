@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="mail_template_sale_summary" model="mail.template">
+        <field name="name">Sale Summary Email</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="subject">Your Sale Order Summary</field>
+        
+        <field name="email_to">{{ object.partner_id.email }}</field>
+        <field name="email_from">{{ user.email }}</field>
+        <field name="description">Email sent to user on server action</field>
+
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; font-size: 14px; color: #333;">
+                <p>Dear <strong><t t-out="object.partner_id.name or 'User'"/></strong>,</p>
+
+                <p><strong>Sales Order Details:</strong></p>
+                <ul>
+                    <li><strong>Customer:</strong> <t t-out="object.partner_id.name"/></li>
+                    
+                    <li><strong>Payment Terms:</strong>
+                        <t t-out="object.payment_term_id.name"/>
+                    </li>
+                    <li><strong>Total Amount:</strong>
+                        <t t-out="object.amount_total"/>
+                    </li>
+                </ul>
+
+                <p>Best regards,<br/>
+                <strong><t t-out="user.partner_id.name"/></strong></p>
+            </div>
+        </field>
+
+        <field name="auto_delete" eval="True"/>
+    </record>
+</odoo>

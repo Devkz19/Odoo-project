@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_invoice_add_payment_fields" inherit_id="account.report_invoice_document">
+        <xpath expr="//div[@id='informations']/div[@name='invoice_date']" position="after">
+            <div class="col" t-if="o.payment_method">
+                <strong>Payment Method</strong>
+                <div t-field="o.payment_method"/>
+            </div>
+            <div class="col" t-if="o.payment_info">
+                <strong>Payment Information</strong>
+                <div t-field="o.payment_info"/>
+            </div>
+        </xpath>
+    </template>
+</odoo>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_pos_order_form_inherit_selected_user" model="ir.ui.view">
+        <field name="name">pos.order.form.inherit.selected.user</field>
+        <field name="model">pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
+        <field name="arch" type="xml">
+            <!-- Add the Selected User field right after the Customer field -->
+            <xpath expr="//field[@name='partner_id']" position="after">
+    <field name="select_user"/>
+</xpath>
+        </field>
+    </record>
+</odoo>

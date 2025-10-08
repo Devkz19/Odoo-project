@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<templates id="template" xml:space="preserve">
+    <t t-name="pos.ControlButtons" t-inherit="point_of_sale.ControlButtons" t-inherit-mode="extension">
+        <xpath expr="//SelectPartnerButton" position="after">
+            <t t-if="!props.showRemainingButtons">
+                <button class="btn btn-outline-success btn-lg" t-on-click="() => this.onClickSelector()">
+                    <i class="fa fa-user me-1" />
+                    <t t-esc="getSelectedUserName()" />
+                </button>
+            </t>
+        </xpath>
+    </t>
+</templates>

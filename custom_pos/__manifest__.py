@@ -7,7 +7,9 @@
     'category': 'for study purpose',
     'website': 'https://www.odoo.com',
     'depends': ['base', 'point_of_sale'],
-    'data': [],
+    'data': [
+        'views/pos_order_view.xml',
+        ],
     'assets': {
         'point_of_sale._assets_pos': [
             'custom_pos/static/src/**/*',

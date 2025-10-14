@@ -136,6 +136,12 @@
                 <field name="state" />
                 <templates>
                     <t t-name="kanban-box">
+                        <style>
+                            .o_kanban_record {
+                                margin: 10px 0 !important; 
+                            }
+                        </style>
+
                         <div class="oe_kanban_global_click o_kanban_record">
                             <strong>
                                 <field name="student_name" />

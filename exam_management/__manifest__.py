@@ -36,6 +36,8 @@
         # 'views/student_profile_view.xml',
         # 'data/exam_data.xml',
         'data/student_sequence.xml',
+        'data/exam_remainder.xml',
+        'data/cron_data.xml',
         'data/exam_planning_demo.xml',
         'data/invigilator_mail_template.xml',
         'data/registration_mail_template.xml',

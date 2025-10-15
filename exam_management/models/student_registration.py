@@ -1,4 +1,5 @@
 from odoo import models, fields, api
+from datetime import date, timedelta
 from odoo.exceptions import ValidationError, UserError
 import logging
 import base64
@@ -21,7 +22,7 @@ class StudentRegistration(models.Model):
         index=True,
         default='New'
     )
-    exam_id = fields.Many2one('exam.master', string="Exam", required=False, tracking=True)
+    exam_id = fields.Many2one('exam.planning', string="Exam", required=False, tracking=True)
     student_count = fields.Integer(string="Total Students", compute="_compute_student_count", store=False)
     student_count_confirmed = fields.Integer(string="Confirmed Students", compute="_compute_student_count")
     student_count_cancelled = fields.Integer(string="Cancelled Students", compute="_compute_student_count")
@@ -95,7 +96,6 @@ class StudentRegistration(models.Model):
         ('unique_student_email', 'unique(email)', 'This email is already registered.'),
         ('unique_student_id', 'unique(student_id)', 'Enrollment ID must be unique.'),
     ]
-
 
     @api.depends_context('uid')
     def _compute_student_count(self):

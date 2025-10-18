@@ -105,6 +105,11 @@
                         type="object"
                         string="Send Test Email"
                         class="btn-primary" />
+
+                    <button name="action_export_excel"
+                            type="object"
+                            string="Export Excel"
+                            class="btn-primary" />    
                      
                        <button name="action_confirm"
                                     type="object"
@@ -122,6 +127,13 @@
 
                 </header>
                 <sheet>
+                     <div name="button_box">
+                <button class="oe_stat_button"
+                        type="object"
+                        icon="fa-file-excel-o"
+                        string="Export to Excel"
+                        name="action_export_excel" />
+            </div>
                     <group>
                         <field name="student_name" />
                         <field name="student_id" readonly="1" />

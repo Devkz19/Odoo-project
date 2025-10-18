@@ -2,7 +2,9 @@ from odoo import models, fields, api
 from datetime import date, timedelta
 from odoo.exceptions import ValidationError, UserError
 import logging
+import io
 import base64
+import xlsxwriter
 
 _logger = logging.getLogger(__name__)
 
@@ -96,6 +98,73 @@ class StudentRegistration(models.Model):
         ('unique_student_email', 'unique(email)', 'This email is already registered.'),
         ('unique_student_id', 'unique(student_id)', 'Enrollment ID must be unique.'),
     ]
+    
+    def action_export_excel(self):
+        """Export the current job application record to Excel (row-wise table)"""
+        self.ensure_one()
+        output = io.BytesIO()
+        workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+        sheet = workbook.add_worksheet('Job Application')
+
+        # Define formats
+        header_format = workbook.add_format({
+            'bold': True,
+            'bg_color': '#D3D3D3',
+            'border': 1,
+            'align': 'center',
+            'valign': 'vcenter'
+        })
+        text_format = workbook.add_format({'border': 1})
+
+        # Data mapping (field order matters here)
+        headers = [
+            'Student Name', 'Enrollment no.', 'Email',
+            'Phone', 'Class & Semester', 'Course'
+        ]
+        values = [
+            self.student_name or '',
+            self.student_id or '',
+            self.email or '',
+            self.phone or '',
+            self.class_semester or '',
+            self.course or '',
+           
+        ]
+
+        # Write headers in row 0
+        for col, header in enumerate(headers):
+            sheet.write(0, col, header, header_format)
+
+        # Write values in row 1
+        for col, value in enumerate(values):
+            sheet.write(1, col, value, text_format)
+
+        # Auto adjust column widths based on header length
+        for col, header in enumerate(headers):
+            column_width = max(len(str(header)), len(str(values[col]))) + 5
+            sheet.set_column(col, col, column_width)
+
+        workbook.close()
+        output.seek(0)
+        excel_data = output.read()
+        output.close()
+
+        # Create attachment
+        attachment = self.env['ir.attachment'].create({
+            'name': f'{self.student_name}_application.xlsx',
+            'type': 'binary',
+            'datas': base64.b64encode(excel_data),
+            'res_model': 'student.registration',
+            'res_id': self.id,
+            'mimetype': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        })
+
+        # Return as downloadable file
+        return {
+            'type': 'ir.actions.act_url',
+            'url': f'/web/content/{attachment.id}?download=true',
+            'target': 'new',
+        }
 
     @api.depends_context('uid')
     def _compute_student_count(self):

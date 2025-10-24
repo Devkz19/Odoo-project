@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="mail_template_student_registration_fail" model="mail.template">
+        <field name="name">Student Registration canceled</field>
+        <field name="model_id" ref="exam_management.model_student_registration"/>
+        <field name="subject">Canceled Registration: {{ object.student_name }}</field>
+        <field name="email_to">{{ object.email }}</field>
+        <field name="email_from">{{ user.email or 'noreply@college.com' }}</field>
+        <field name="description">Email sent to student upon canceled registration</field>
+
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; font-size: 14px; color: #333;">
+                <p>Dear <strong><t t-out="object.student_name or 'Student'"/></strong>,</p>
+                <p>
+                    We regret to inform you that your registration with our institution has been canceled.
+                </p>
+
+                <p><strong>Registration Details:</strong></p>
+                <ul>
+                    <li><strong>Student Name:</strong> <t t-out="object.student_name"/></li>
+                    <li><strong>Enrollment ID:</strong> <t t-out="object.student_id"/></li>
+                    <li><strong>Course:</strong>
+                        <t t-out="object._fields['course'].convert_to_export(object.course, object)"/>
+                    </li>
+                    <li><strong>Class and Semester:</strong>
+                        <t t-out="object._fields['class_semester'].convert_to_export(object.class_semester, object)"/>
+                    </li>
+                </ul>
+
+                <p>If you believe this is a mistake or need further assistance, please contact the administration office.</p>
+
+                <p>Best regards,<br/>
+                <strong><t t-out="user.company_id.name or 'College Administration'"/></strong></p>
+            </div>
+        </field>
+
+        <field name="auto_delete" eval="True"/>
+    </record>
+</odoo>

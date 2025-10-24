@@ -42,6 +42,7 @@
         'data/exam_planning_demo.xml',
         'data/invigilator_mail_template.xml',
         'data/registration_mail_template.xml',
+        'data/canceled_mail_template.xml',
     ],
     'demo': [],
     

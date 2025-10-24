@@ -197,6 +197,13 @@ class StudentRegistration(models.Model):
     def action_cancel(self):
         for rec in self:
             rec.state = 'cancel'
+            # Fetch the mail template
+            template = self.env.ref('exam_management.mail_template_student_registration_fail', raise_if_not_found=False)
+            if template:
+                # Send email to the student
+                template.send_mail(rec.id, force_send=True)
+            else:
+                _logger.warning("Email template not found: exam_management.mail_template_student_registration_fail")
     
     def action_send_test_email(self):
             """Manual trigger to test email sending"""

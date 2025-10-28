@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Form View -->
+    <record id="view_teacher_form" model="ir.ui.view">
+        <field name="name">training.teacher.form</field>
+        <field name="model">training.teacher</field>
+        <field name="arch" type="xml">
+            <form string="Teacher">
+                <header>
+                    <button name="action_view_applications" type="object"
+                            class="oe_stat_button" icon="fa-users"
+                            string="Students">
+                        <field name="student_count" widget="statinfo"/>
+                    </button>
+                </header>
+
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="email"/>
+                        <field name="expertise"/>
+                    </group>
+                      <notebook>
+                        <page string="Students">
+                            <field name="student_ids">
+                                <list editable="bottom">
+                                    <field name="name" />
+                                    <field name="age"/>
+                                    <field name="course"/>
+                                </list>
+                            </field>
+                        </page>
+                        
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+             <!-- List View -->
+    <record id="view_teacher_list" model="ir.ui.view">
+         <field name="name">training.teacher.list</field>
+        <field name="model">training.teacher</field>
+        <field name="arch" type="xml">
+            <list string="teachers">
+               <field name="name"/>
+               <field name="email"/>
+               <field name="expertise"/>
+            </list>
+        </field>
+    </record>
+
+          <!-- Action -->
+    <record id="action_training_teacher" model="ir.actions.act_window">
+        <field name="name">Training Teacher</field>
+        <field name="res_model">training.teacher</field>
+        <field name="view_mode">list,form</field>
+        <field name="target">current</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_training_root" name="Training Management"
+      web_icon="teacher,static/description/icon.png"/>
+    <menuitem id="menu_teacher" name="Teacher"
+              parent="menu_training_root"
+              action="action_training_teacher"
+              sequence="1"
+              groups="teacher.group_training_management"/>
+
+</odoo>

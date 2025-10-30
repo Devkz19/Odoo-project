@@ -76,6 +76,11 @@
                             type="action"
                             class="btn-primary"/>
 
+                    <button name="action_export_excel"
+                            type="object"
+                            string="Export to Excel"
+                            class="btn-primary" />          
+
                     <button name="action_new"
                                     type="object"
                                     string="New"

@@ -15,6 +15,20 @@
                     </div>
                 </a>
             </div>
+
+            <div class="o_portal_index_card col-md-6">
+                <a t-att-href="'/my/student_list'" class="o_portal_doc_card">
+                    <div class="o_portal_doc_icon">
+                        <img src="/exam_management/static/src/img/student.png"
+                            alt="Students" style="max-height:48px;"/>
+                    </div>
+                    <div class="o_portal_doc_content">
+                        <h3>Student Details</h3>
+                        <p>View the list of all registered students.</p>
+                    </div>
+                </a>
+            </div>
+
         </xpath>
     </template>
 
@@ -164,6 +178,159 @@
             </div>
         </t>
     </template>
+
+    <!-- Student list page -->
+    <template id="student_portal_list" name="Student List">
+    <t t-call="portal.portal_layout">
+
+        <t t-set="breadcrumbs" t-value="[
+            {'name': 'Student Details', 'url': '/my/student_list'}
+        ]"/>
+
+        <div class="container my-4">
+            <h2>All Registered Students</h2>
+            <hr/>
+
+            <!-- FILTER BAR -->
+            <form method="get" id="student_filter_form" class="mb-4 p-3 border rounded bg-light">
+
+            <div class="row">
+
+                <!-- Search -->
+                <div class="col-md-3">
+                    <input type="text" name="search" class="form-control auto-submit"
+                        placeholder="Search Name / Email / ID"
+                        t-att-value="search"/>
+                </div>
+
+                <!-- Course -->
+                <div class="col-md-2">
+                    <select name="course" class="form-select auto-submit-change">
+                        <option value="">Course</option>
+                        <option t-att-selected="course=='IT'" value="IT">IT</option>
+                        <option t-att-selected="course=='CS'" value="CS">CS</option>
+                        <option t-att-selected="course=='EC'" value="EC">Electronics</option>
+                        <option t-att-selected="course=='ME'" value="ME">Mechanical</option>
+                        <option t-att-selected="course=='CE'" value="CE">Civil</option>
+                        <option t-att-selected="course=='EE'" value="EE">Electrical</option>
+                        <option t-att-selected="course=='BT'" value="BT">BioTech</option>
+                        <option t-att-selected="course=='CH'" value="CH">Chemical</option>
+                    </select>
+                </div>
+
+                <!-- Semester -->
+                <div class="col-md-2">
+                    <select name="semester" class="form-select auto-submit-change">
+                        <option value="">Semester</option>
+                        <t t-foreach="request.env['student.registration']._fields['class_semester'].selection" t-as="sem">
+                            <option t-att-value="sem[0]" t-att-selected="semester==sem[0]">
+                                <t t-esc="sem[1]"/>
+                            </option>
+                        </t>
+                    </select>
+                </div>
+
+                <!-- Status -->
+                <div class="col-md-2">
+                    <select name="status" class="form-select auto-submit-change">
+                        <option value="">Status</option>
+                        <option value="confirm" t-att-selected="status=='confirm'">Confirmed</option>
+                        <option value="cancel" t-att-selected="status=='cancel'">Cancelled</option>
+                    </select>
+                </div>
+
+            </div>
+            
+        </form>
+
+
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Profile</th>
+                        <th>Name</th>
+                        <th>Enrollment ID</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Course</th>
+                        <th>Semester</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <t t-foreach="students" t-as="stu">
+                        <tr>
+                            <td>
+                                <img t-if="stu.image_1920"
+                                     t-att-src="'data:image/png;base64,%s' % stu.image_1920.decode()"
+                                     style="height:50px; width:50px; border-radius:50%;" />
+                                <span t-if="not stu.image_1920" class="text-muted">No Image</span>
+                            </td>
+
+                            <td><t t-esc="stu.student_name"/></td>
+
+                            <td><t t-esc="stu.student_id"/></td>
+
+                            <td><t t-esc="stu.email"/></td>
+
+                            <td><t t-esc="stu.phone"/></td>
+
+                            <td><t t-esc="dict(stu._fields['course'].selection).get(stu.course)"/></td>
+
+                            <td><t t-esc="dict(stu._fields['class_semester'].selection).get(stu.class_semester)"/></td>
+
+                            <td>
+                                <span t-if="stu.state == 'confirm'" class="badge bg-success">Confirmed</span>
+                                <span t-if="stu.state == 'cancel'" class="badge bg-danger">Cancelled</span>
+                            </td>
+                           
+
+                        </tr>
+                    </t>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- AUTO SUBMIT JAVASCRIPT -->
+        <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            console.log("Student Filter Script Loaded ✔");
+
+            // Auto-submit on dropdown change
+            document.querySelectorAll(".auto-submit-change").forEach(function (el) {
+
+                el.addEventListener("change", function () {
+                    console.log("Filter changed:", el.name, " → ", el.value);
+                    console.log("Submitting form...");
+                    document.getElementById("student_filter_form").submit();
+                });
+
+            });
+
+            // Auto-submit on typing (with delay)
+            let typingTimer;
+            document.querySelectorAll(".auto-submit").forEach(function (el) {
+
+                el.addEventListener("keyup", function () {
+                    console.log("Typing detected:", el.name, " → ", el.value);
+                    clearTimeout(typingTimer);
+
+                    typingTimer = setTimeout(function () {
+                        console.log("Typing stopped → auto submitting search");
+                        document.getElementById("student_filter_form").submit();
+                    }, 500); // 0.5 sec delay
+                });
+
+            });
+
+        });
+        </script>
+
+    </t>
+</template>
+
 
     <template id="student_portal_breadcrumb_override" inherit_id="portal.portal_breadcrumbs" name="Student Portal Breadcrumbs Override">
         <xpath expr="//ol" position="replace">
